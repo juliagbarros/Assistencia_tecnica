@@ -28,16 +28,32 @@ public class UsuarioController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/email")
+    public ResponseEntity<Usuario> buscarPorEmail(String email){
+        return ResponseEntity.ok(usuarioService.buscarUsuarioEmail(email));
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<Usuario> updatePassword (@PathVariable Long id, @RequestBody Usuario usuario) {
         Usuario user = usuarioService.editarSenha(id, usuario.getSenha());
         return ResponseEntity.ok(user);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody Usuario usuario){
+        return ResponseEntity.ok(usuarioService.atualizar(id, usuario));
+    }
+
     @GetMapping
     public ResponseEntity<List<Usuario>> getAll () {
         List<Usuario> users = usuarioService.buscarTodos();
         return ResponseEntity.ok(users);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        usuarioService.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 
 

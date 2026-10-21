@@ -33,9 +33,30 @@ public class UsuarioService {
         return user;
     }
 
+    @Transactional
+    public Usuario atualizar(Long id, Usuario dados){
+        Usuario user=buscarPorId(id);
+        user.setNome(dados.getNome());
+        user.setEmail(dados.getEmail());
+        user.setPerfil(dados.getPerfil());
+        return user;
+    }
+
     @Transactional(readOnly = true)
     public List<Usuario> buscarTodos(){
         return usuarioRepository.findAll();
+    }
+
+
+    @Transactional(readOnly = true)
+    public Usuario buscarUsuarioEmail(String email){
+        return usuarioRepository.findByEmail(email).orElseThrow( () -> new RuntimeException("Email não encontrado") );
+
+    }
+
+    @Transactional
+    public void excluir(Long id){
+        usuarioRepository.delete(buscarPorId(id));
     }
 
 
