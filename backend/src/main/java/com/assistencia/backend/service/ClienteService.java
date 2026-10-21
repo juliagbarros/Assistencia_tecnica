@@ -1,0 +1,47 @@
+package com.assistencia.backend.service;
+
+
+import com.assistencia.backend.model.Cliente;
+import com.assistencia.backend.model.Usuario;
+import com.assistencia.backend.repository.ClienteRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ClienteService {
+    private final ClienteRepository clienteRepository;
+
+    @Transactional
+    public Cliente salvar(Cliente cliente) {
+        return clienteRepository.save(cliente);
+    }
+
+    @Transactional(readOnly = true)
+    public Cliente buscarPorId(Long id) {
+        return clienteRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Cliente> buscarTodos() {
+        return clienteRepository.findAll();
+    }
+
+    @Transactional
+    public Cliente atualizar(Long id, Cliente dados) {
+        Cliente cliente = buscarPorId(id);
+        cliente.setNome(dados.getNome());
+        cliente.setTelefone(dados.getTelefone());
+        cliente.setEmail(dados.getEmail());
+        return cliente;
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+        clienteRepository.delete(buscarPorId(id));
+    }
+
+}
