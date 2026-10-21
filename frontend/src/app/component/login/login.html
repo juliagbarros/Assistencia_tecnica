@@ -1,0 +1,130 @@
+
+<main class="tela">
+
+    <section class="painel-wrap">
+
+        <div class="texto-principal">
+
+            <span class="selo">
+                SISTEMA DE ASSISTÊNCIA TÉCNICA
+            </span>
+
+            <h1>
+                Conserte qualquer dispositivo
+                que precisar em um só lugar.
+            </h1>
+
+            <p>
+                Acompanhe o progresso do conserto,
+                consulte o técnico responsável e tenha
+                todas as informações do seu aparelho
+                em um só lugar.
+            </p>
+
+        </div>
+
+        <section class="carrosel">
+
+            <h2>Dispositivos que atendemos</h2>
+
+            <div class="orbita">
+
+                <div class="box">
+                    <span class="icone">📱</span>
+                    <h3>Celular</h3>
+                    <p>Apple, Motorola, Samsung, Xiaomi</p>
+                </div>
+
+                <div class="box">
+                    <span class="icone">📲</span>
+                    <h3>Tablet</h3>
+                    <p>Apple, Lenovo, Samsung</p>
+                </div>
+
+                <div class="box">
+                    <span class="icone">🖥️</span>
+                    <h3>Computador</h3>
+                    <p>Qualquer marca</p>
+                </div>
+
+                <div class="box">
+                    <span class="icone">💻</span>
+                    <h3>Notebook</h3>
+                    <p>Qualquer marca</p>
+                </div>
+
+                <div class="box">
+                    <span class="icone">🎮</span>
+                    <h3>Controle</h3>
+                    <p>Videogame e TV</p>
+                </div>
+
+                <div class="box">
+                    <span class="icone">⌚</span>
+                    <h3>Relógios</h3>
+                    <p>Apple Watch e similares</p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </section>
+
+
+    <section class="painel-login">
+
+        <div class="form-header">
+
+            <span class="selo-login">
+                ACESSO AO SISTEMA
+            </span>
+
+            <h2>Bem-vindo de volta!</h2>
+
+            <p>
+                Entre com suas credenciais
+                para acessar o sistema.
+            </p>
+
+        </div>
+
+        <form (submit)="entrar($event)">
+
+            <input
+                type="text"
+                placeholder="Login"
+                name="login"
+                id="login"
+                aria-label="Login"
+                autocomplete="username"
+                required
+            >
+
+            <input
+                type="password"
+                placeholder="Senha"
+                name="senha"
+                id="senha"
+                aria-label="Senha"
+                autocomplete="current-password"
+                required
+            >
+
+            <button type="submit">
+                Entrar
+            </button>
+
+            <p class="mensagem" aria-live="polite">
+                {{ mensagem }}
+            </p>
+
+        </form>
+
+        <p class="rodape-login">
+            Assistência Técnica • Gestão de atendimentos
+        </p>
+
+    </section>
+
+</main>
