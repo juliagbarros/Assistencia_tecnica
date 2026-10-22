@@ -2,7 +2,6 @@ package com.assistencia.backend.service;
 
 
 import com.assistencia.backend.model.Cliente;
-import com.assistencia.backend.model.Usuario;
 import com.assistencia.backend.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
