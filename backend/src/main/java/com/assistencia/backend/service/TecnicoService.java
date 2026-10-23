@@ -1,4 +1,5 @@
 package com.assistencia.backend.service;
+import com.assistencia.backend.exception.ResourceNotFindException;
 import com.assistencia.backend.model.Tecnico;
 import com.assistencia.backend.repository.TecnicoRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class TecnicoService {
 
     @Transactional(readOnly = true)
     public Tecnico buscarPorId(Long id) {
-        return tecnicoRepository.findById(id).orElseThrow(() -> new RuntimeException("Tecnico não encontrado"));
+        return tecnicoRepository.findById(id).orElseThrow(() -> new ResourceNotFindException("Tecnico não encontrado"));
     }
 
     @Transactional(readOnly = true)

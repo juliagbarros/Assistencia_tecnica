@@ -1,5 +1,6 @@
 package com.assistencia.backend.service;
 
+import com.assistencia.backend.exception.ResourceNotFindException;
 import com.assistencia.backend.model.Servico;
 import com.assistencia.backend.repository.ServicoRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class ServicoService {
 
     @Transactional(readOnly = true)
     public Servico buscarPorId(Long id) {
-        return servicoRepository.findById(id).orElseThrow(() -> new RuntimeException("Servico não encontrado"));
+        return servicoRepository.findById(id).orElseThrow(() -> new ResourceNotFindException("Servico não encontrado"));
     }
 
     @Transactional(readOnly = true)

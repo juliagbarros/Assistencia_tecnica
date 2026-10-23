@@ -1,6 +1,7 @@
 package com.assistencia.backend.service;
 
 
+import com.assistencia.backend.exception.ResourceNotFindException;
 import com.assistencia.backend.model.Usuario;
 import com.assistencia.backend.repository.UsuarioRepository;
 
@@ -23,7 +24,7 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public Usuario buscarPorId(Long id) {
-        return usuarioRepository.findById(id).orElseThrow( ()->new RuntimeException("Usuário não encontrado") );
+        return usuarioRepository.findById(id).orElseThrow( ()->new ResourceNotFindException("Usuário não encontrado") );
     }
 
     @Transactional
@@ -50,7 +51,7 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public Usuario buscarUsuarioEmail(String email){
-        return usuarioRepository.findByEmail(email).orElseThrow( () -> new RuntimeException("Email não encontrado") );
+        return usuarioRepository.findByEmail(email).orElseThrow( () -> new ResourceNotFindException("Email não encontrado") );
 
     }
 
