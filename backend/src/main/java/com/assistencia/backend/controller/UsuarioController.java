@@ -1,7 +1,11 @@
 package com.assistencia.backend.controller;
 
+import com.assistencia.backend.dto.UsuarioRequest;
+import com.assistencia.backend.dto.UsuarioResponse;
+import com.assistencia.backend.dto.UsuarioUpdateRequest;
 import com.assistencia.backend.model.Usuario;
 import com.assistencia.backend.service.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,36 +21,24 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseEntity<Usuario> create (@RequestBody Usuario usuario) {
-        Usuario user = usuarioService.salvar(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<UsuarioResponse> create (@Valid @RequestBody UsuarioRequest dados) {
+        Usuario user = usuarioService.salvar(dados);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioResponse(user));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getById (@PathVariable Long id) {
-        Usuario user = usuarioService.buscarPorId(id);
-        return ResponseEntity.ok(user);
-    }
-
-    @GetMapping("/email")
-    public ResponseEntity<Usuario> buscarPorEmail(String email){
-        return ResponseEntity.ok(usuarioService.buscarUsuarioEmail(email));
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Usuario> updatePassword (@PathVariable Long id, @RequestBody Usuario usuario) {
-        Usuario user = usuarioService.editarSenha(id, usuario.getSenha());
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UsuarioResponse> getById (@PathVariable Long id) {
+        return ResponseEntity.ok(new UsuarioResponse(usuarioService.buscarPorId(id)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody Usuario usuario){
-        return ResponseEntity.ok(usuarioService.atualizar(id, usuario));
+    public ResponseEntity<UsuarioResponse> update(@PathVariable Long id, @Valid @RequestBody UsuarioUpdateRequest dados){
+        return ResponseEntity.ok(new UsuarioResponse(usuarioService.atualizar(id, dados)));
     }
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> getAll () {
-        List<Usuario> users = usuarioService.buscarTodos();
+    public ResponseEntity<List<UsuarioResponse>> getAll () {
+        List<UsuarioResponse> users = usuarioService.buscarTodos().stream().map(UsuarioResponse::new).toList();
         return ResponseEntity.ok(users);
     }
 

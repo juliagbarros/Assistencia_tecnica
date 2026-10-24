@@ -33,7 +33,8 @@ public class Usuario {
     @NotBlank(message = "Obrigatório preencher a senha")
     private String senha;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false,length = 50)
-    private String perfil;
+    private Perfil perfil;
 
 }
