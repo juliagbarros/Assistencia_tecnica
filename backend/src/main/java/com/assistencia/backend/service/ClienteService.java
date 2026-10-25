@@ -1,8 +1,10 @@
 package com.assistencia.backend.service;
 
 
+import com.assistencia.backend.exception.BusinessException;
 import com.assistencia.backend.exception.ResourceNotFindException;
 import com.assistencia.backend.model.Cliente;
+import com.assistencia.backend.repository.AparelhoRepository;
 import com.assistencia.backend.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClienteService {
     private final ClienteRepository clienteRepository;
+    private final AparelhoRepository aparelhoRepository;
+
 
     @Transactional
     public Cliente salvar(Cliente cliente) {
@@ -41,7 +45,11 @@ public class ClienteService {
 
     @Transactional
     public void excluir(Long id) {
-        clienteRepository.delete(buscarPorId(id));
+        Cliente cliente = buscarPorId(id);
+        if (aparelhoRepository.existsByClienteId(id)) {
+            throw new BusinessException("Não é possível excluir agora pois o cliente possui aparelhos vinculados à ele.");
+        }
+        clienteRepository.delete(cliente);
     }
 
 }
