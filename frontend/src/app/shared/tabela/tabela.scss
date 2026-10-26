@@ -1,0 +1,273 @@
+.secao-table {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.secao-dados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.secao-dados h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.secao-dados p {
+    color: var(--cor-texto-secundario);
+    font-size: 0.9rem;
+}
+
+.secao-table-header {
+    padding: 1.5rem;
+
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda-azul);
+    border-radius: 14px;
+}
+
+.secao-table-header form {
+    display: flex;
+    align-items: end;
+    gap: 1.5rem;
+}
+
+.campo-busca {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    padding: 0.8rem 1rem;
+
+    background: var(--cor-input);
+    border: 1px solid var(--cor-borda-azul);
+    border-radius: 10px;
+
+    color: var(--cor-texto-secundario);
+}
+
+.campo-busca input {
+    width: 100%;
+
+    background: transparent;
+    color: var(--cor-texto);
+
+    border: none;
+    outline: none;
+}
+
+.campo-busca:focus-within {
+    border-color: var(--cor-destaque);
+}
+
+.campo-status {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.campo-status label {
+    font-size: 0.8rem;
+    color: var(--cor-texto-secundario);
+}
+
+.campo-status select,
+.paginacao select {
+    padding: 0.7rem;
+
+    background: var(--cor-input);
+    color: var(--cor-texto);
+
+    border: 1px solid var(--cor-borda-azul);
+    border-radius: 8px;
+}
+
+.btn-adicionar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    padding: 0.8rem 1rem;
+
+    background: var(--cor-destaque);
+    color: var(--cor-primaria);
+
+    border: none;
+    border-radius: 10px;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.btn-adicionar:hover {
+    background: var(--cor-destaque-hover);
+}
+
+.secao-table-main {
+    overflow-x: auto;
+
+    background: var(--cor-fundo);
+    border: 1px solid var(--cor-borda-azul);
+    border-radius: 14px;
+}
+
+table {
+    width: 100%;
+    min-width: 720px;
+
+    border-collapse: collapse;
+    text-align: left;
+}
+
+thead {
+    background: var(--cor-tabela-header);
+}
+
+th, td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--cor-borda-azul);
+}
+
+th {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+td {
+    font-size: 0.85rem;
+    color: var(--cor-texto-secundario);
+}
+
+tbody tr {
+    transition: background-color 0.2s;
+}
+
+tbody tr:hover {
+    background: rgba(92, 200, 246, 0.06);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.status {
+    display: inline-block;
+
+    padding: 0.35rem 0.75rem;
+
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status.positivo {
+    color: var(--cor-sucesso);
+    background: rgba(18, 201, 149, 0.12);
+}
+
+.status.negativo {
+    color: var(--cor-perigo);
+    background: rgba(255, 82, 111, 0.12);
+}
+
+.acoes {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.acoes button {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+    border: 1px solid var(--cor-borda-azul);
+}
+
+.btn-editar {
+    background: var(--cor-input);
+    color: var(--cor-destaque);
+}
+
+.btn-remover {
+    background: rgba(255, 82, 111, 0.12);
+    color: var(--cor-perigo);
+}
+
+.btn-editar:hover {
+    border-color: var(--cor-destaque);
+}
+
+.btn-remover:hover {
+    border-color: var(--cor-perigo);
+}
+
+.sem-registros {
+    padding: 3rem;
+    text-align: center;
+}
+
+.secao-table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+
+    color: var(--cor-texto-secundario);
+    font-size: 0.8rem;
+}
+
+.paginacao {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.paginacao label {
+    margin-right: 0.5rem;
+}
+
+.paginacao button {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--cor-input);
+    color: var(--cor-texto);
+
+    border: 1px solid var(--cor-borda-azul);
+    border-radius: 8px;
+}
+
+.paginacao .pagina-atual {
+    background: var(--cor-destaque);
+    color: var(--cor-primaria);
+    font-weight: 700;
+    opacity: 1;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+

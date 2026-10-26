@@ -1,0 +1,29 @@
+<section class="pagina-servicos">
+
+    <div class="caminho">
+        <span>Início</span>
+        <span>›</span>
+        <span>Serviços</span>
+    </div>
+
+    <app-tabela
+        titulo="Serviços"
+        descricao="Visualize e gerencie os serviços cadastrados"
+        placeholderBusca="Digite o nome do serviço..."
+        textoAdicionar="Adicionar serviço"
+
+        [colunas]="colunas"
+        [registros]="registros()"
+
+        (adicionar)="adicionarServico()"
+        (editar)="editarServico($event)"
+        (remover)="removerServico($event)">
+    </app-tabela>
+
+    @if (mensagem()) {
+        <p class="mensagem">
+            {{ mensagem() }}
+        </p>
+    }
+
+</section>

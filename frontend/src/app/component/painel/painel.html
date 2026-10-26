@@ -1,0 +1,262 @@
+<section class="pagina-painel">
+
+    <nav class="caminho" aria-label="Caminho de navegação">
+        <span>Início</span>
+        <span>›</span>
+        <span>Painel geral</span>
+    </nav>
+
+    <header class="cabecalho-painel">
+
+        <div class="titulo-painel">
+            <p class="data-atual">{{ dataAtual }}</p>
+
+            <h1>Painel geral</h1>
+
+            <p>
+                Acompanhe os indicadores e os atendimentos
+                da sua assistência técnica.
+            </p>
+        </div>
+
+        <a class="btn-ver-ordens" routerLink="/ordens">
+            Ver ordens
+            <svg lucideArrowRight [size]="18"></svg>
+        </a>
+
+    </header>
+
+    <div class="indicadores">
+
+        <a class="card-indicador" routerLink="/clientes">
+
+            <div class="icone-indicador azul">
+                <svg lucideUsersRound [size]="24"></svg>
+            </div>
+
+            <div class="dados-indicador">
+                <p>Clientes cadastrados</p>
+                <h2>{{ totalClientes() }}</h2>
+                <span>Visualizar clientes</span>
+            </div>
+
+        </a>
+
+        <a class="card-indicador" routerLink="/ordens">
+
+            <div class="icone-indicador amarelo">
+                <svg lucideClipboardList [size]="24"></svg>
+            </div>
+
+            <div class="dados-indicador">
+                <p>Ordens em atendimento</p>
+                <h2>{{ ordensEmAtendimento() }}</h2>
+                <span>Visualizar ordens</span>
+            </div>
+
+        </a>
+
+        <a class="card-indicador" routerLink="/aparelhos">
+
+            <div class="icone-indicador verde">
+                <svg lucideMonitor [size]="24"></svg>
+            </div>
+
+            <div class="dados-indicador">
+                <p>Aparelhos cadastrados</p>
+                <h2>{{ totalAparelhos() }}</h2>
+                <span>Visualizar aparelhos</span>
+            </div>
+
+        </a>
+
+        <a class="card-indicador" routerLink="/agendamentos">
+
+            <div class="icone-indicador roxo">
+                <svg lucideCalendarDays [size]="24"></svg>
+            </div>
+
+            <div class="dados-indicador">
+                <p>Agendamentos futuros</p>
+                <h2>{{ totalAgendamentosFuturos() }}</h2>
+                <span>Visualizar agendamentos</span>
+            </div>
+
+        </a>
+
+    </div>
+
+    <div class="grade-painel">
+
+        <section class="bloco-painel">
+
+            <div class="cabecalho-bloco">
+
+                <div>
+                    <h2>Ordens recentes</h2>
+                    <p>Últimos atendimentos registrados</p>
+                </div>
+
+                <a routerLink="/ordens">
+                    Ver todas
+                    <svg lucideArrowRight [size]="16"></svg>
+                </a>
+
+            </div>
+
+            <div class="lista-registros">
+
+                @for (ordem of ordensRecentes(); track ordem.id) {
+
+                    <div class="registro-ordem">
+
+                        <div class="informacoes-ordem">
+
+                            <strong>{{ ordem.numero }}</strong>
+
+                            <span>{{ ordem.cliente }}</span>
+
+                            <small>
+                                {{ ordem.aparelho }} • {{ ordem.abertura }}
+                            </small>
+
+                        </div>
+
+                        <span
+                            class="etiqueta-status"
+                            [class.status-aberta]="ordem.status === 'Aberta'"
+                            [class.status-andamento]="ordem.status === 'Em atendimento'"
+                            [class.status-concluida]="ordem.status === 'Concluída'"
+                            [class.status-entregue]="ordem.status === 'Entregue'">
+
+                            {{ ordem.status }}
+
+                        </span>
+
+                    </div>
+
+                } @empty {
+
+                    <p class="estado-vazio">
+                        Nenhuma ordem de serviço cadastrada.
+                    </p>
+
+                }
+
+            </div>
+
+        </section>
+
+        <section class="bloco-painel">
+
+            <div class="cabecalho-bloco">
+
+                <div>
+                    <h2>Próximos agendamentos</h2>
+                    <p>Atendimentos previstos</p>
+                </div>
+
+                <a routerLink="/agendamentos">
+                    Ver todos
+                    <svg lucideArrowRight [size]="16"></svg>
+                </a>
+
+            </div>
+
+            <div class="lista-registros">
+
+                @for (agendamento of proximosAgendamentos(); track agendamento.id) {
+
+                    <div class="registro-agendamento">
+
+                        <div class="data-agendamento">
+                            <strong>
+                                {{ formatarData(agendamento.data) }}
+                            </strong>
+
+                            <span>{{ agendamento.horario }}</span>
+                        </div>
+
+                        <div class="informacoes-agendamento">
+
+                            <strong>{{ agendamento.cliente }}</strong>
+
+                            <span>{{ agendamento.aparelho }}</span>
+
+                            <small>
+                                Técnico: {{ agendamento.tecnico }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                } @empty {
+
+                    <p class="estado-vazio">
+                        Não existem agendamentos futuros pendentes.
+                    </p>
+
+                }
+
+            </div>
+
+        </section>
+
+        <section class="bloco-painel">
+
+            <div class="cabecalho-bloco">
+
+                <div>
+                    <h2>Situação das ordens</h2>
+                    <p>Distribuição por status</p>
+                </div>
+
+                <span class="total-ordens">
+                    {{ totalOrdens() }} ordens
+                </span>
+
+            </div>
+
+            <div class="distribuicao">
+
+                @for (situacao of distribuicaoOrdens(); track situacao.status) {
+
+                    <div class="item-distribuicao">
+
+                        <div class="linha-distribuicao">
+
+                            <span>{{ situacao.nome }}</span>
+
+                            <strong>
+                                {{ situacao.quantidade }}
+                                ({{ situacao.percentual }}%)
+                            </strong>
+
+                        </div>
+
+                        <div class="trilho" aria-hidden="true">
+
+                            <div
+                                class="preenchimento"
+                                [class.aberta]="situacao.classe === 'aberta'"
+                                [class.andamento]="situacao.classe === 'andamento'"
+                                [class.concluida]="situacao.classe === 'concluida'"
+                                [class.entregue]="situacao.classe === 'entregue'"
+                                [style.width.%]="situacao.percentual">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                }
+
+            </div>
+
+        </section>
+
+     
+    </div>
+
+</section>

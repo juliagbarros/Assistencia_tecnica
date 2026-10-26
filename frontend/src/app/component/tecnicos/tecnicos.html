@@ -1,0 +1,86 @@
+<section class="pagina-tecnicos">
+
+    <nav class="caminho" aria-label="Caminho de navegação">
+        <span>Início</span>
+        <span>›</span>
+        <span>Técnicos</span>
+    </nav>
+
+    <app-tabela
+        titulo="Técnicos"
+        descricao="Visualize e gerencie os técnicos cadastrados na assistência."
+        placeholderBusca="Pesquisar nome, telefone ou especialidade..."
+        textoAdicionar="Adicionar técnico"
+
+        [colunas]="colunas"
+        [registros]="tecnicos()"
+
+        (adicionar)="adicionarTecnico()"
+        (editar)="editarTecnico($event)"
+        (remover)="removerTecnico($event)">
+
+        <div resumo class="indicadores">
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador azul">
+                    <svg lucideUsersRound [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalTecnicos() }}</h3>
+                    <p>Total de técnicos</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador verde">
+                    <svg lucideCircleCheck [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ tecnicosAtivos() }}</h3>
+                    <p>Técnicos ativos</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador amarelo">
+                    <svg lucideUserRound [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ tecnicosInativos() }}</h3>
+                    <p>Técnicos inativos</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador roxo">
+                    <svg lucideWrench [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalEspecialidades() }}</h3>
+                    <p>Especialidades</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </app-tabela>
+
+    @if (mensagem()) {
+        <p class="mensagem" role="status">
+            {{ mensagem() }}
+        </p>
+    }
+
+</section>

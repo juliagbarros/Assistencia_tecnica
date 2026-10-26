@@ -1,0 +1,85 @@
+<section class="pagina-clientes">
+
+    <nav class="caminho" aria-label="Caminho de navegação">
+        <a routerLink="/painel">Início</a>
+        <span>›</span>
+        <span>Clientes</span>
+    </nav>
+
+    <app-tabela
+        titulo="Clientes"
+        descricao="Visualize e gerencie os clientes cadastrados"
+        placeholderBusca="Digite o nome do cliente..."
+        textoAdicionar="Adicionar cliente"
+        [colunas]="colunas"
+        [registros]="registros()"
+
+        (adicionar)="adicionarCliente()"
+        (editar)="editarCliente($event)"
+        (remover)="removerCliente($event)">
+
+        <div resumo class="indicadores">
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador azul">
+                    <svg lucideUsersRound [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalClientes() }}</h3>
+                    <p>Clientes cadastrados</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador verde">
+                    <svg lucideSmartphone [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>0</h3>
+                    <p>Com aparelhos</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador amarelo">
+                    <svg lucideWrench [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>2</h3>
+                    <p>Em atendimento</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador roxo">
+                    <svg lucideCircleCheck [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>2</h3>
+                    <p>Atendimentos concluídos</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </app-tabela>
+
+    @if (mensagem()) {
+        <p class="mensagem" role="status">
+            {{ mensagem() }}
+        </p>
+    }
+
+</section>

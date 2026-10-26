@@ -1,0 +1,88 @@
+<section class="pagina-aparelhos">
+
+    <nav class="caminho" aria-label="Caminho de navegação">
+        <span>Início</span>
+        <span>›</span>
+        <span>Aparelhos</span>
+    </nav>
+
+    <app-tabela
+        titulo="Aparelhos"
+        descricao="Visualize e gerencie os aparelhos cadastrados na assistência."
+        placeholderBusca="Pesquisar aparelho, cliente ou modelo..."
+        textoAdicionar="Adicionar aparelho"
+
+        [colunas]="colunas"
+        [registros]="aparelhos()"
+
+        (adicionar)="adicionarAparelho()"
+        (editar)="editarAparelho($event)"
+        (remover)="removerAparelho($event)">
+
+        <div resumo class="indicadores">
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador azul">
+                    <svg lucideTablet [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalAparelhos() }}</h3>
+                    <p>Total de aparelhos</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador verde">
+                    <svg lucideSmartphone [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalCelulares() }}</h3>
+                    <p>Celulares</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador amarelo">
+                    <svg lucideLaptop [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalNotebooks() }}</h3>
+                    <p>Notebooks</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador roxo">
+                    <svg lucideMonitor [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalComputadores() }}</h3>
+                    <p>Computadores</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </app-tabela>
+
+    @if (mensagem()) {
+
+        <p class="mensagem" role="status">
+            {{ mensagem() }}
+        </p>
+
+    }
+
+</section>

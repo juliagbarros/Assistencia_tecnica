@@ -15,3 +15,28 @@ app-root {
     display: block;
     min-height: 100vh;
 }
+
+:root {
+    --cor-primaria: #04052D;
+    --cor-destaque: #5CC8F6;
+    --cor-destaque-hover: #3DCCFF;
+
+    --cor-fundo: #010815;
+    --cor-sidebar: #010F2A;
+    --cor-topbar: #010A1E;
+    --cor-superficie: #07182D;
+    --cor-card: #17182E;
+    --cor-tabela-header: #09172D;
+    --cor-input: #0A1B33;
+    --cor-campo: #D9D9D9;
+
+    --cor-texto: #F5F7FF;
+    --cor-texto-secundario: #A8B8D3;
+
+    --cor-borda: #54556D;
+    --cor-borda-azul: #234568;
+
+    --cor-sucesso: #12C995;
+    --cor-alerta: #F2B84B;
+    --cor-perigo: #FF526F;
+}

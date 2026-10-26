@@ -1,0 +1,226 @@
+<div class="secao-table">
+
+    <div class="secao-dados">
+
+        <h1>{{ titulo() }}</h1>
+
+        <p>{{ descricao() }}</p>
+
+    </div>
+
+    <ng-content select="[resumo]"></ng-content>
+
+    <div class="secao-table-header">
+
+        <form (submit)="$event.preventDefault()">
+
+            <div class="campo-busca">
+                <svg lucideSearch [size]="20"></svg>
+
+                <input
+                    type="search"
+                    name="busca"
+                    [placeholder]="placeholderBusca()"
+                    [value]="busca()"
+                    (input)="alterarBusca($event)"
+                    aria-label="Pesquisar registros">
+            </div>
+
+            <div class="campo-status">
+
+                <label for="status">Status</label>
+
+                <select
+                    name="status"
+                    id="status"
+                    [value]="statusSelecionado()"
+                    (change)="alterarStatus($event)">
+
+                    <option value="Todos">Todos</option>
+
+                    @for (status of opcoesStatus(); track status) {
+                        <option [value]="status">
+                            {{ status }}
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+            <button
+                type="button"
+                class="btn-adicionar"
+                (click)="adicionar.emit()">
+
+                <svg lucidePlus [size]="20"></svg>
+
+                {{ textoAdicionar() }}
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="secao-table-main">
+
+        <table>
+
+            <thead>
+                <tr>
+
+                    
+
+                    @for (coluna of colunas(); track coluna.chave) {
+                        <th scope="col">
+                            {{ coluna.titulo }}
+                        </th>
+                    }
+
+                    <th scope="col">Ações</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @for (registro of registrosPaginados(); track registro.id) {
+
+                    <tr>
+
+                      
+
+                        @for (coluna of colunas(); track coluna.chave) {
+
+                            <td>
+
+                                @if (coluna.tipo === 'status') {
+
+                                    <span
+                                        class="status"
+                                        [class.positivo]="registro[coluna.chave] === 'Ativo' || registro[coluna.chave] === 'Disponível'"
+                                        [class.negativo]="registro[coluna.chave] === 'Inativo' || registro[coluna.chave] === 'Indisponível'">
+
+                                        {{ registro[coluna.chave] }}
+
+                                    </span>
+
+                                } @else {
+
+                                    {{ registro[coluna.chave] }}
+
+                                }
+
+                            </td>
+
+                        }
+
+                        <td class="acoes">
+
+                            <button
+                                type="button"
+                                class="btn-editar"
+                                [attr.aria-label]="'Editar registro ' + registro.id"
+                                (click)="editar.emit(registro.id)">
+
+                                <svg lucideSquarePen [size]="18"></svg>
+
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn-remover"
+                                [attr.aria-label]="'Remover registro ' + registro.id"
+                                (click)="remover.emit(registro.id)">
+
+                                <svg lucideTrash2 [size]="18"></svg>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                } @empty {
+
+                    <tr>
+                        <td
+                            class="sem-registros"
+                            [attr.colspan]="colunas().length + 2">
+
+                            Nenhum registro encontrado.
+
+                        </td>
+                    </tr>
+
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="secao-table-footer">
+
+        <span>
+            {{ selecionados().length }}
+            de
+            {{ registrosFiltrados().length }}
+            selecionados
+        </span>
+
+        <div class="paginacao">
+
+            <label for="itens-pagina">
+                Itens por Página
+            </label>
+
+            <select
+                name="itens-pagina"
+                id="itens-pagina"
+                [value]="itensPorPagina()"
+                (change)="alterarItensPorPagina($event)">
+
+                <option [value]="5">5</option>
+                <option [value]="10">10</option>
+                <option [value]="20">20</option>
+
+            </select>
+
+            <button
+                type="button"
+                aria-label="Página anterior"
+                (click)="paginaAnterior()"
+                [disabled]="paginaVisivel() === 1">
+
+                <svg lucideChevronLeft [size]="18"></svg>
+
+            </button>
+
+            <button
+                type="button"
+                class="pagina-atual"
+                aria-current="page"
+                disabled>
+
+                {{ paginaVisivel() }}
+
+            </button>
+
+            <button
+                type="button"
+                aria-label="Próxima página"
+                (click)="proximaPagina()"
+                [disabled]="paginaVisivel() === totalPaginas()">
+
+                <svg lucideChevronRight [size]="18"></svg>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

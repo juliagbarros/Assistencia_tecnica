@@ -1,0 +1,42 @@
+ :host {
+    display: block;
+    min-height: 100vh;
+}
+
+.layout-principal {
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100vh;
+    background-color: var(--cor-fundo);
+}
+
+app-topbar {
+    display: block;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.corpo-layout {
+    display: flex;
+    flex: 1;
+    align-items: stretch;
+
+    width: 100%;
+    min-height: calc(100vh - 80px);
+}
+
+app-sidenav {
+    display: block;
+    flex: 0 0 235px;
+}
+
+.conteudo {
+    flex: 1;
+    min-width: 0;
+
+    padding: 2rem;
+
+    background-color: var(--cor-fundo);
+}
+

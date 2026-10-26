@@ -1,0 +1,86 @@
+<section class="pagina-agendamentos">
+
+    <nav class="caminho" aria-label="Caminho de navegação">
+        <span>Início</span>
+        <span>›</span>
+        <span>Agendamentos</span>
+    </nav>
+
+    <app-tabela
+        titulo="Agendamentos"
+        descricao="Visualize e gerencie os atendimentos agendados."
+        placeholderBusca="Pesquisar cliente, aparelho ou técnico..."
+        textoAdicionar="Novo agendamento"
+
+        [colunas]="colunas"
+        [registros]="registros()"
+
+        (adicionar)="adicionarAgendamento()"
+        (editar)="editarAgendamento($event)"
+        (remover)="removerAgendamento($event)">
+
+        <div resumo class="indicadores">
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador azul">
+                    <svg lucideCalendarDays [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalAgendamentos() }}</h3>
+                    <p>Total de agendamentos</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador amarelo">
+                    <svg lucideClock3 [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalAgendados() }}</h3>
+                    <p>Agendados</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador roxo">
+                    <svg lucideUserRound [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalConfirmados() }}</h3>
+                    <p>Confirmados</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador verde">
+                    <svg lucideCircleCheck [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalConcluidos() }}</h3>
+                    <p>Concluídos</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </app-tabela>
+
+    @if (mensagem()) {
+        <p class="mensagem" role="status">
+            {{ mensagem() }}
+        </p>
+    }
+
+</section>
