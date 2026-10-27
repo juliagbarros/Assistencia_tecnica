@@ -1,7 +1,9 @@
 package com.assistencia.backend.service;
 
+import com.assistencia.backend.exception.BusinessException;
 import com.assistencia.backend.exception.ResourceNotFindException;
 import com.assistencia.backend.model.Servico;
+import com.assistencia.backend.repository.ItemOrdemRepository;
 import com.assistencia.backend.repository.ServicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ServicoService {
     private final ServicoRepository servicoRepository;
+    private final ItemOrdemRepository itemRepository;
 
     @Transactional
     public Servico salvar(Servico servico) {
@@ -44,7 +47,11 @@ public class ServicoService {
 
     @Transactional
     public void excluir(Long id) {
-        servicoRepository.delete(buscarPorId(id));
+        Servico servico = buscarPorId(id);
+        if (itemRepository.existsByServicoId(id)) {
+            throw new BusinessException("Não é possível excluir pois o serviço está em ordens. Desative ele antes de excluir.");
+        }
+        servicoRepository.delete(servico);
     }
 
 }

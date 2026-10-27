@@ -1,6 +1,9 @@
 package com.assistencia.backend.service;
+import com.assistencia.backend.exception.BusinessException;
 import com.assistencia.backend.exception.ResourceNotFindException;
 import com.assistencia.backend.model.Tecnico;
+import com.assistencia.backend.repository.AgendamentoRepository;
+import com.assistencia.backend.repository.OrdemServicoRepository;
 import com.assistencia.backend.repository.TecnicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TecnicoService {
     private final TecnicoRepository tecnicoRepository;
+    private final OrdemServicoRepository ordemRepository;
+    private final AgendamentoRepository agendamentoRepository;
 
     @Transactional
     public Tecnico salvar(Tecnico tecnico) {
@@ -40,8 +45,13 @@ public class TecnicoService {
 
     @Transactional
     public void excluir(Long id) {
-        tecnicoRepository.delete(buscarPorId(id));
+        Tecnico tecnico = buscarPorId(id);
+        if (ordemRepository.existsByTecnicoId(id)) {
+            throw new BusinessException("Não é possível excluir: o técnico possui ordens vinculadas");
+        }
+        if (agendamentoRepository.existsByTecnicoId(id)) {
+            throw new BusinessException("Não é possível excluir: o técnico possui agendamentos vinculados");
+        }
+        tecnicoRepository.delete(tecnico);
     }
-
-
 }
