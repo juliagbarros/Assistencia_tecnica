@@ -1,20 +1,19 @@
+
 <section class="pagina-ordens">
 
     <nav class="caminho" aria-label="Caminho de navegação">
         <a routerLink="/painel">Início</a>
         <span>›</span>
-        <span>Ordens de Serviço</span>
+        <span>Ordens</span>
     </nav>
 
     <app-tabela
         titulo="Ordens de Serviço"
-        descricao="Acompanhe os reparos e atendimentos da assistência."
-        placeholderBusca="Pesquisar ordens de serviço..."
-        textoAdicionar="Nova OS"
-
+        descricao="Visualize e gerencie as ordens de serviço da assistência."
+        placeholderBusca="Pesquisar número da OS, cliente ou aparelho..."
+        textoAdicionar="Adicionar ordem"
         [colunas]="colunas"
         [registros]="ordens()"
-
         (adicionar)="adicionarOrdem()"
         (editar)="editarOrdem($event)"
         (remover)="removerOrdem($event)">
@@ -36,7 +35,7 @@
 
             <div class="card-indicador">
 
-                <div class="icone-indicador amarelo">
+                <div class="icone-indicador verde">
                     <svg lucideClock3 [size]="24"></svg>
                 </div>
 
@@ -49,7 +48,7 @@
 
             <div class="card-indicador">
 
-                <div class="icone-indicador roxo">
+                <div class="icone-indicador amarelo">
                     <svg lucideWrench [size]="24"></svg>
                 </div>
 
@@ -62,13 +61,13 @@
 
             <div class="card-indicador">
 
-                <div class="icone-indicador verde">
+                <div class="icone-indicador roxo">
                     <svg lucideCircleCheck [size]="24"></svg>
                 </div>
 
                 <div class="dados-indicador">
                     <h3>{{ ordensConcluidas() }}</h3>
-                    <p>Concluídas / entregues</p>
+                    <p>Ordens concluídas</p>
                 </div>
 
             </div>
@@ -76,6 +75,23 @@
         </div>
 
     </app-tabela>
+
+    @if (modalAberto()) {
+
+        <app-modal
+            [titulo]="ordemSelecionada() ? 'Editar ordem' : 'Cadastrar ordem'"
+            [descricao]="ordemSelecionada() ? 'Atualize as informações da ordem de serviço.' : 'Preencha as informações da nova ordem de serviço.'"
+            (fechar)="fecharModal()">
+
+            <app-formulario-ordem
+                [ordem]="ordemSelecionada()"
+                (salvar)="salvarOrdem($event)"
+                (cancelar)="fecharModal()">
+            </app-formulario-ordem>
+
+        </app-modal>
+
+    }
 
     @if (mensagem()) {
         <p class="mensagem" role="status">

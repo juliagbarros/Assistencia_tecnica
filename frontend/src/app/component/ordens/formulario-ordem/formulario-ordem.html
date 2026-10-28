@@ -1,0 +1,103 @@
+
+<form
+    class="formulario-ordem"
+    [formGroup]="formulario"
+    (ngSubmit)="enviar()"
+    novalidate>
+
+    <div class="campo-formulario">
+        <label for="numero-ordem">Número da ordem <span>*</span></label>
+
+        <input
+            id="numero-ordem"
+            type="text"
+            formControlName="numero"
+            placeholder="Ex.: OS-0001">
+
+        @if (formulario.controls.numero.invalid && formulario.controls.numero.touched) {
+            <small class="erro">Informe o número da ordem.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="cliente-ordem">Cliente <span>*</span></label>
+
+        <input
+            id="cliente-ordem"
+            type="text"
+            formControlName="cliente"
+            placeholder="Nome do cliente">
+
+        @if (formulario.controls.cliente.invalid && formulario.controls.cliente.touched) {
+            <small class="erro">Informe o cliente.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="aparelho-ordem">Aparelho <span>*</span></label>
+
+        <input
+            id="aparelho-ordem"
+            type="text"
+            formControlName="aparelho"
+            placeholder="Aparelho vinculado">
+
+        @if (formulario.controls.aparelho.invalid && formulario.controls.aparelho.touched) {
+            <small class="erro">Informe o aparelho.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="tecnico-ordem">Técnico responsável <span>*</span></label>
+
+        <input
+            id="tecnico-ordem"
+            type="text"
+            formControlName="tecnico"
+            placeholder="Nome do técnico">
+
+        @if (formulario.controls.tecnico.invalid && formulario.controls.tecnico.touched) {
+            <small class="erro">Informe o técnico responsável.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="abertura-ordem">Data de abertura <span>*</span></label>
+
+        <input
+            id="abertura-ordem"
+            type="date"
+            formControlName="abertura">
+
+        @if (formulario.controls.abertura.invalid && formulario.controls.abertura.touched) {
+            <small class="erro">Informe a data de abertura.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="status-ordem">Status <span>*</span></label>
+
+        <select id="status-ordem" formControlName="status">
+            <option value="Aberta">Aberta</option>
+            <option value="Em atendimento">Em atendimento</option>
+            <option value="Concluída">Concluída</option>
+            <option value="Entregue">Entregue</option>
+        </select>
+    </div>
+
+    <div class="acoes-formulario">
+        <button
+            type="button"
+            class="btn-cancelar"
+            (click)="cancelar.emit()">
+            Cancelar
+        </button>
+
+        <button
+            type="submit"
+            class="btn-salvar">
+            {{ ordem() ? 'Salvar alterações' : 'Cadastrar ordem' }}
+        </button>
+    </div>
+
+</form>

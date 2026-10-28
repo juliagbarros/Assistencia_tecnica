@@ -1,20 +1,26 @@
+
 import { Injectable, signal } from '@angular/core';
 import { RegistroTabela } from '../../shared/tabela/tabela';
 
-export type TipoAparelho =
-    | 'Celular'
-    | 'Notebook'
-    | 'Computador'
-    | 'Tablet';
+export type StatusAparelho =
+    'Recebido' | 'Em manutenção' | 'Pronto' | 'Entregue';
 
 export interface Aparelho extends RegistroTabela {
-    nome: string;
-    tipo: TipoAparelho;
+    cliente: string;
+    tipo: string;
     marca: string;
     modelo: string;
-    cliente: string;
     numeroSerie: string;
-    status: 'Ativo' | 'Inativo';
+    status: StatusAparelho;
+}
+
+export interface DadosAparelho {
+    cliente: string;
+    tipo: string;
+    marca: string;
+    modelo: string;
+    numeroSerie: string;
+    status: StatusAparelho;
 }
 
 @Injectable({
@@ -25,58 +31,63 @@ export class AparelhoService {
     private readonly aparelhos = signal<Aparelho[]>([
         {
             id: 1,
-            nome: 'Galaxy A54',
+            cliente: 'Heitor Santana',
             tipo: 'Celular',
             marca: 'Samsung',
-            modelo: 'SM-A546E',
-            cliente: 'João Silva',
-            numeroSerie: 'SN-0001',
-            status: 'Ativo'
+            modelo: 'Galaxy S24',
+            numeroSerie: 'ABC123',
+            status: 'Recebido'
         },
         {
             id: 2,
-            nome: 'Inspiron 15',
+            cliente: 'João Paulo Menezes',
             tipo: 'Notebook',
             marca: 'Dell',
-            modelo: 'Inspiron 3520',
-            cliente: 'Maria Oliveira',
-            numeroSerie: 'SN-0002',
-            status: 'Ativo'
-        },
-        {
-            id: 3,
-            nome: 'iPhone 13',
-            tipo: 'Celular',
-            marca: 'Apple',
-            modelo: 'A2633',
-            cliente: 'Pedro Santos',
-            numeroSerie: 'SN-0003',
-            status: 'Ativo'
-        },
-        {
-            id: 4,
-            nome: 'PC Gamer',
-            tipo: 'Computador',
-            marca: 'Montado',
-            modelo: 'Desktop personalizado',
-            cliente: 'Ana Costa',
-            numeroSerie: 'SN-0004',
-            status: 'Inativo'
-        },
-        {
-            id: 5,
-            nome: 'Galaxy Tab S9',
-            tipo: 'Tablet',
-            marca: 'Samsung',
-            modelo: 'SM-X710',
-            cliente: 'Carlos Lima',
-            numeroSerie: 'SN-0005',
-            status: 'Ativo'
+            modelo: 'Inspiron 15',
+            numeroSerie: 'XYZ456',
+            status: 'Em manutenção'
         }
     ]);
 
     listar() {
         return this.aparelhos.asReadonly();
+    }
+
+    criar(dados: DadosAparelho): void {
+        const novoId = Math.max(
+            0,
+            ...this.aparelhos().map(aparelho => aparelho.id)
+        ) + 1;
+
+        const novoAparelho: Aparelho = {
+            id: novoId,
+            ...dados
+        };
+
+        this.aparelhos.update(aparelhos => [
+            ...aparelhos,
+            novoAparelho
+        ]);
+    }
+
+    atualizar(id: number, dados: DadosAparelho): boolean {
+        const existe = this.aparelhos().some(
+            aparelho => aparelho.id === id
+        );
+
+        if (!existe) {
+            return false;
+        }
+
+        this.aparelhos.update(aparelhos =>
+            aparelhos.map(aparelho =>
+                aparelho.id === id
+                    ? { ...aparelho, ...dados }
+                    : aparelho
+            )
+        );
+
+        return true;
     }
 
     remover(id: number): void {

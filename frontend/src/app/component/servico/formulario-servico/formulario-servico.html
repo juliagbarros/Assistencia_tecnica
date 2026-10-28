@@ -1,0 +1,129 @@
+
+<form
+    class="formulario-servico"
+    [formGroup]="formulario"
+    (ngSubmit)="enviar()"
+    novalidate>
+
+    <div class="campo-formulario">
+
+        <label for="nome-servico">
+            Nome do serviço <span>*</span>
+        </label>
+
+        <input
+            id="nome-servico"
+            type="text"
+            formControlName="nome"
+            placeholder="Ex.: Troca de tela">
+
+        @if (formulario.controls.nome.invalid && formulario.controls.nome.touched) {
+            <small class="erro">Informe o nome do serviço.</small>
+        }
+
+    </div>
+
+    <div class="campo-formulario">
+
+        <label for="categoria-servico">
+            Categoria <span>*</span>
+        </label>
+
+        <select id="categoria-servico" formControlName="categoria">
+            <option value="">Selecione a categoria</option>
+            <option value="Celular">Celular</option>
+            <option value="Tablet">Tablet</option>
+            <option value="Notebook">Notebook</option>
+            <option value="Computador">Computador</option>
+            <option value="Geral">Geral</option>
+        </select>
+
+        @if (formulario.controls.categoria.invalid && formulario.controls.categoria.touched) {
+            <small class="erro">Selecione uma categoria.</small>
+        }
+
+    </div>
+
+    <div class="campo-formulario">
+
+        <label for="descricao-servico">
+            Descrição
+        </label>
+
+        <textarea
+            id="descricao-servico"
+            formControlName="descricao"
+            rows="3"
+            placeholder="Descreva o serviço">
+        </textarea>
+
+    </div>
+
+    <div class="campo-formulario">
+
+        <label for="valor-servico">
+            Valor (R$) <span>*</span>
+        </label>
+
+        <input
+            id="valor-servico"
+            type="number"
+            min="0"
+            step="0.01"
+            formControlName="valor">
+
+        @if (formulario.controls.valor.invalid && formulario.controls.valor.touched) {
+            <small class="erro">Informe um valor válido.</small>
+        }
+
+    </div>
+
+    <div class="campo-formulario">
+
+        <label for="tempo-servico">
+            Tempo estimado <span>*</span>
+        </label>
+
+        <input
+            id="tempo-servico"
+            type="text"
+            formControlName="tempoEstimado"
+            placeholder="Ex.: 2 horas">
+
+        @if (formulario.controls.tempoEstimado.invalid && formulario.controls.tempoEstimado.touched) {
+            <small class="erro">Informe o tempo estimado.</small>
+        }
+
+    </div>
+
+    <div class="campo-formulario">
+
+        <label for="status-servico">
+            Status <span>*</span>
+        </label>
+
+        <select id="status-servico" formControlName="status">
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+        </select>
+
+    </div>
+
+    <div class="acoes-formulario">
+
+        <button
+            type="button"
+            class="btn-cancelar"
+            (click)="cancelar.emit()">
+            Cancelar
+        </button>
+
+        <button
+            type="submit"
+            class="btn-salvar">
+            {{ servico() ? 'Salvar alterações' : 'Cadastrar serviço' }}
+        </button>
+
+    </div>
+
+</form>

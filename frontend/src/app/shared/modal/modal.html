@@ -1,0 +1,30 @@
+
+<dialog
+    #dialogo
+    class="modal"
+    aria-labelledby="titulo-modal"
+    (close)="fechar.emit()"
+    (click)="clicarFora($event)">
+
+    <div class="modal-header">
+
+        <div class="modal-titulos">
+            <h2 id="titulo-modal">{{ titulo() }}</h2>
+            <p>{{ descricao() }}</p>
+        </div>
+
+        <button
+            type="button"
+            class="btn-fechar"
+            aria-label="Fechar modal"
+            (click)="fecharModal()">
+            &times;
+        </button>
+
+    </div>
+
+    <div class="modal-conteudo">
+        <ng-content></ng-content>
+    </div>
+
+</dialog>

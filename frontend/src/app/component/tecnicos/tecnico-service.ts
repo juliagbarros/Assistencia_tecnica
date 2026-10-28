@@ -1,12 +1,23 @@
+
 import { Injectable, signal } from '@angular/core';
 import { RegistroTabela } from '../../shared/tabela/tabela';
+
+export type StatusTecnico = 'Ativo' | 'Inativo';
 
 export interface Tecnico extends RegistroTabela {
     nome: string;
     telefone: string;
     email: string;
     especialidade: string;
-    status: 'Ativo' | 'Inativo';
+    status: StatusTecnico;
+}
+
+export interface DadosTecnico {
+    nome: string;
+    telefone: string;
+    email: string;
+    especialidade: string;
+    status: StatusTecnico;
 }
 
 @Injectable({
@@ -59,6 +70,43 @@ export class TecnicoService {
 
     listar() {
         return this.tecnicos.asReadonly();
+    }
+
+    criar(dados: DadosTecnico): void {
+        const novoId = Math.max(
+            0,
+            ...this.tecnicos().map(tecnico => tecnico.id)
+        ) + 1;
+
+        const novoTecnico: Tecnico = {
+            id: novoId,
+            ...dados
+        };
+
+        this.tecnicos.update(tecnicos => [
+            ...tecnicos,
+            novoTecnico
+        ]);
+    }
+
+    atualizar(id: number, dados: DadosTecnico): boolean {
+        const existe = this.tecnicos().some(
+            tecnico => tecnico.id === id
+        );
+
+        if (!existe) {
+            return false;
+        }
+
+        this.tecnicos.update(tecnicos =>
+            tecnicos.map(tecnico =>
+                tecnico.id === id
+                    ? { ...tecnico, ...dados }
+                    : tecnico
+            )
+        );
+
+        return true;
     }
 
     remover(id: number): void {

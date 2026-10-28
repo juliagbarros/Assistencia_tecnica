@@ -1,27 +1,100 @@
+
 <section class="pagina-servicos">
 
-    <div class="caminho">
+    <nav class="caminho" aria-label="Caminho de navegação">
         <span>Início</span>
         <span>›</span>
         <span>Serviços</span>
-    </div>
+    </nav>
 
     <app-tabela
         titulo="Serviços"
-        descricao="Visualize e gerencie os serviços cadastrados"
-        placeholderBusca="Digite o nome do serviço..."
+        descricao="Visualize e gerencie os serviços oferecidos pela assistência."
+        placeholderBusca="Pesquisar serviço ou categoria..."
         textoAdicionar="Adicionar serviço"
-
         [colunas]="colunas"
-        [registros]="registros()"
-
+        [registros]="servicos()"
         (adicionar)="adicionarServico()"
         (editar)="editarServico($event)"
         (remover)="removerServico($event)">
+
+        <div resumo class="indicadores">
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador azul">
+                    <svg lucideWrench [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalServicos() }}</h3>
+                    <p>Total de serviços</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador verde">
+                    <svg lucideCircleCheck [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ servicosAtivos() }}</h3>
+                    <p>Serviços ativos</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador amarelo">
+                    <svg lucideClock3 [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ servicosInativos() }}</h3>
+                    <p>Serviços inativos</p>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="icone-indicador roxo">
+                    <svg lucideSmartphone [size]="24"></svg>
+                </div>
+
+                <div class="dados-indicador">
+                    <h3>{{ totalCategorias() }}</h3>
+                    <p>Categorias</p>
+                </div>
+
+            </div>
+
+        </div>
+
     </app-tabela>
 
+    @if (modalAberto()) {
+
+        <app-modal
+            [titulo]="servicoSelecionado() ? 'Editar serviço' : 'Cadastrar serviço'"
+            [descricao]="servicoSelecionado() ? 'Atualize as informações do serviço.' : 'Preencha as informações do novo serviço.'"
+            (fechar)="fecharModal()">
+
+            <app-formulario-servico
+                [servico]="servicoSelecionado()"
+                (salvar)="salvarServico($event)"
+                (cancelar)="fecharModal()">
+            </app-formulario-servico>
+
+        </app-modal>
+
+    }
+
     @if (mensagem()) {
-        <p class="mensagem">
+        <p class="mensagem" role="status">
             {{ mensagem() }}
         </p>
     }

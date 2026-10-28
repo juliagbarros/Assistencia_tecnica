@@ -1,18 +1,16 @@
 import { Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
 export class Login {
    mensagem: string = '';
 
-  entrar(event: Event): void {
-    event.preventDefault();
+ 
 
-    this.mensagem = 'A autenticação será implementada posteriormente.';
-  }
 
 }

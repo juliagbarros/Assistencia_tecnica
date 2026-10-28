@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 import { Login } from './component/login/login';
 import { Clientes } from './component/clientes/clientes';
 import { LayoutPrincipal } from './layout/layout-principal/layout-principal';
-import { Servico } from './component/servico/servico';
+import { Servicos} from './component/servico/servico';
 import { Ordens } from './component/ordens/ordens';
 import { Aparelhos } from './component/aparelhos/aparelhos';
 import { Tecnicos } from './component/tecnicos/tecnicos';
@@ -32,7 +32,7 @@ export const routes: Routes = [
             }, 
             {
                 path: 'servicos',
-                component: Servico
+                component: Servicos
             },
             {
                 path: 'ordens',

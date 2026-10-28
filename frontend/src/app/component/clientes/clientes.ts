@@ -1,3 +1,4 @@
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -8,16 +9,23 @@ import {
     LucideCircleCheck
 } from '@lucide/angular';
 
-
-
 import { ColunaTabela, RegistroTabela, Tabela } from '../../shared/tabela/tabela';
-import { ClienteService } from './cliente-service';
+import { Modal } from '../../shared/modal/modal';
+import { FormularioCliente } from './formulario-cliente/formulario-cliente';
+
+import {
+    Cliente,
+    DadosCliente,
+    ClienteService
+} from './cliente-service';
 
 @Component({
     selector: 'app-clientes',
     imports: [
         RouterLink,
         Tabela,
+        Modal,
+        FormularioCliente,
         LucideUsersRound,
         LucideSmartphone,
         LucideWrench,
@@ -30,10 +38,8 @@ export class Clientes {
 
     private readonly clienteService = inject(ClienteService);
 
-    // Dados recebidos do service
     readonly clientes = this.clienteService.listar();
 
-    // Configuração exclusiva da tabela de clientes
     readonly colunas: ColunaTabela[] = [
         { chave: 'nome', titulo: 'Nome' },
         { chave: 'telefone', titulo: 'Telefone' },
@@ -41,7 +47,6 @@ export class Clientes {
         { chave: 'status', titulo: 'Status', tipo: 'status' }
     ];
 
-    // Registros enviados ao componente reutilizável
     readonly registros = computed<RegistroTabela[]>(() => {
         return this.clientes();
     });
@@ -52,16 +57,56 @@ export class Clientes {
 
     readonly mensagem = signal('');
 
+    readonly modalAberto = signal(false);
+
+    readonly clienteSelecionado = signal<Cliente | null>(null);
+
     adicionarCliente(): void {
-        this.mensagem.set(
-            'O formulário de cadastro será implementado posteriormente.'
-        );
+        this.clienteSelecionado.set(null);
+        this.modalAberto.set(true);
     }
 
     editarCliente(id: number): void {
-        this.mensagem.set(
-            `O formulário de edição do cliente ${id} será implementado posteriormente.`
+        const cliente = this.clientes().find(
+            cliente => cliente.id === id
         );
+
+        if (!cliente) {
+            this.mensagem.set('Cliente não encontrado.');
+            return;
+        }
+
+        this.clienteSelecionado.set(cliente);
+        this.modalAberto.set(true);
+    }
+
+    fecharModal(): void {
+        this.modalAberto.set(false);
+        this.clienteSelecionado.set(null);
+    }
+
+    salvarCliente(dados: DadosCliente): void {
+        const cliente = this.clienteSelecionado();
+
+        if (cliente) {
+            const atualizado = this.clienteService.atualizar(
+                cliente.id,
+                dados
+            );
+
+            if (!atualizado) {
+                this.mensagem.set('Cliente não encontrado.');
+                return;
+            }
+
+            this.mensagem.set('Cliente atualizado com sucesso.');
+        } else {
+            this.clienteService.criar(dados);
+
+            this.mensagem.set('Cliente cadastrado com sucesso.');
+        }
+
+        this.fecharModal();
     }
 
     removerCliente(id: number): void {

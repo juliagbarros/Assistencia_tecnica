@@ -1,3 +1,4 @@
+
 import { Component, computed, inject, signal } from '@angular/core';
 
 import {
@@ -8,13 +9,25 @@ import {
 } from '@lucide/angular';
 
 import { ColunaTabela, Tabela } from '../../shared/tabela/tabela';
-import { TecnicoService } from './tecnico-service';
 
+import {
+    Tecnico,
+    DadosTecnico,
+    TecnicoService
+} from './tecnico-service';
+
+import { Modal } from '../../shared/modal/modal';
+
+import {
+    FormularioTecnico
+} from './formulario-tecnico/formulario-tecnico';
 
 @Component({
     selector: 'app-tecnicos',
     imports: [
         Tabela,
+        Modal,
+        FormularioTecnico,
         LucideUsersRound,
         LucideCircleCheck,
         LucideUserRound,
@@ -28,6 +41,10 @@ export class Tecnicos {
     private readonly tecnicoService = inject(TecnicoService);
 
     readonly tecnicos = this.tecnicoService.listar();
+
+    readonly modalAberto = signal(false);
+
+    readonly tecnicoSelecionado = signal<Tecnico | null>(null);
 
     readonly colunas: ColunaTabela[] = [
         { chave: 'nome', titulo: 'Nome' },
@@ -64,24 +81,60 @@ export class Tecnicos {
     readonly mensagem = signal('');
 
     adicionarTecnico(): void {
-        this.mensagem.set(
-            'O cadastro de técnicos ainda será implementado.'
-        );
+        this.tecnicoSelecionado.set(null);
+        this.modalAberto.set(true);
     }
 
     editarTecnico(id: number): void {
-        this.mensagem.set(
-            `A edição do técnico ${id} ainda será implementada.`
+        const tecnico = this.tecnicos().find(
+            tecnico => tecnico.id === id
         );
+
+        if (!tecnico) {
+            this.mensagem.set('Técnico não encontrado.');
+            return;
+        }
+
+        this.tecnicoSelecionado.set(tecnico);
+        this.modalAberto.set(true);
+    }
+
+    salvarTecnico(dados: DadosTecnico): void {
+        const tecnico = this.tecnicoSelecionado();
+
+        if (tecnico) {
+            const atualizado = this.tecnicoService.atualizar(
+                tecnico.id,
+                dados
+            );
+
+            if (!atualizado) {
+                this.mensagem.set('Técnico não encontrado.');
+                return;
+            }
+
+            this.mensagem.set('Técnico atualizado com sucesso.');
+        } else {
+            this.tecnicoService.criar(dados);
+            this.mensagem.set('Técnico cadastrado com sucesso.');
+        }
+
+        this.fecharModal();
+    }
+
+    fecharModal(): void {
+        this.modalAberto.set(false);
+        this.tecnicoSelecionado.set(null);
     }
 
     removerTecnico(id: number): void {
-
         const confirmado = window.confirm(
             'Deseja remover este técnico dos dados de demonstração?'
         );
 
-        if (!confirmado) return;
+        if (!confirmado) {
+            return;
+        }
 
         this.tecnicoService.remover(id);
 

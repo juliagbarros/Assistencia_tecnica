@@ -1,20 +1,19 @@
+
 <section class="pagina-aparelhos">
 
     <nav class="caminho" aria-label="Caminho de navegação">
-        <span>Início</span>
+        <a routerLink="/painel">Início</a>
         <span>›</span>
         <span>Aparelhos</span>
     </nav>
 
     <app-tabela
         titulo="Aparelhos"
-        descricao="Visualize e gerencie os aparelhos cadastrados na assistência."
-        placeholderBusca="Pesquisar aparelho, cliente ou modelo..."
+        descricao="Visualize e gerencie os aparelhos cadastrados."
+        placeholderBusca="Pesquisar cliente, marca ou modelo..."
         textoAdicionar="Adicionar aparelho"
-
         [colunas]="colunas"
         [registros]="aparelhos()"
-
         (adicionar)="adicionarAparelho()"
         (editar)="editarAparelho($event)"
         (remover)="removerAparelho($event)">
@@ -22,67 +21,68 @@
         <div resumo class="indicadores">
 
             <div class="card-indicador">
-
                 <div class="icone-indicador azul">
                     <svg lucideTablet [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
                     <h3>{{ totalAparelhos() }}</h3>
                     <p>Total de aparelhos</p>
                 </div>
-
             </div>
 
             <div class="card-indicador">
-
-                <div class="icone-indicador verde">
+                <div class="icone-indicador amarelo">
                     <svg lucideSmartphone [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
-                    <h3>{{ totalCelulares() }}</h3>
-                    <p>Celulares</p>
+                    <h3>{{ emManutencao() }}</h3>
+                    <p>Em manutenção</p>
                 </div>
-
             </div>
 
             <div class="card-indicador">
-
-                <div class="icone-indicador amarelo">
+                <div class="icone-indicador verde">
                     <svg lucideLaptop [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
-                    <h3>{{ totalNotebooks() }}</h3>
-                    <p>Notebooks</p>
+                    <h3>{{ aparelhosProntos() }}</h3>
+                    <p>Prontos</p>
                 </div>
-
             </div>
 
             <div class="card-indicador">
-
                 <div class="icone-indicador roxo">
                     <svg lucideMonitor [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
-                    <h3>{{ totalComputadores() }}</h3>
-                    <p>Computadores</p>
+                    <h3>{{ aparelhosEntregues() }}</h3>
+                    <p>Entregues</p>
                 </div>
-
             </div>
 
         </div>
 
     </app-tabela>
 
-    @if (mensagem()) {
+    @if (modalAberto()) {
+        <app-modal
+            [titulo]="aparelhoSelecionado() ? 'Editar aparelho' : 'Cadastrar aparelho'"
+            [descricao]="aparelhoSelecionado() ? 'Atualize as informações do aparelho.' : 'Preencha as informações do novo aparelho.'"
+            (fechar)="fecharModal()">
 
+            <app-formulario-aparelho
+                [aparelho]="aparelhoSelecionado()"
+                (salvar)="salvarAparelho($event)"
+                (cancelar)="fecharModal()">
+            </app-formulario-aparelho>
+
+        </app-modal>
+    }
+
+    @if (mensagem()) {
         <p class="mensagem" role="status">
             {{ mensagem() }}
         </p>
-
     }
 
 </section>

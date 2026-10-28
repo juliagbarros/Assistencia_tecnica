@@ -1,0 +1,53 @@
+<form class="formulario-cliente" [formGroup]="formulario" (ngSubmit)="enviar()">
+
+    <div class="campo-formulario">
+        <label for="nome-tecnico">Nome completo *</label>
+        <input id="nome-tecnico" formControlName="nome" placeholder="Nome do técnico">
+        @if (formulario.controls.nome.invalid && formulario.controls.nome.touched) {
+            <small class="erro">Informe um nome válido.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="telefone-tecnico">Telefone *</label>
+        <input id="telefone-tecnico" type="tel" formControlName="telefone" placeholder="(81) 99999-9999">
+        @if (formulario.controls.telefone.invalid && formulario.controls.telefone.touched) {
+            <small class="erro">Informe o telefone.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="email-tecnico">E-mail *</label>
+        <input id="email-tecnico" type="email" formControlName="email" placeholder="exemplo@email.com">
+        @if (formulario.controls.email.invalid && formulario.controls.email.touched) {
+            <small class="erro">Informe um e-mail válido.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="especialidade-tecnico">Especialidade *</label>
+        <input id="especialidade-tecnico" formControlName="especialidade" placeholder="Ex.: Computadores e notebooks">
+        @if (formulario.controls.especialidade.invalid && formulario.controls.especialidade.touched) {
+            <small class="erro">Informe a especialidade.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="status-tecnico">Status *</label>
+        <select id="status-tecnico" formControlName="status">
+            <option value="Disponível">Disponível</option>
+            <option value="Indisponível">Indisponível</option>
+        </select>
+    </div>
+
+    <div class="acoes-formulario">
+        <button type="button" class="btn-cancelar" (click)="cancelar.emit()">
+            Cancelar
+        </button>
+
+        <button type="submit" class="btn-salvar">
+            {{ tecnico() ? 'Salvar alterações' : 'Cadastrar técnico' }}
+        </button>
+    </div>
+
+</form>

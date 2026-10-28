@@ -1,0 +1,94 @@
+
+<form
+    class="formulario-cliente"
+    [formGroup]="formulario"
+    (ngSubmit)="enviar()"
+    novalidate>
+
+    <div class="campo-formulario">
+        <label for="cliente-aparelho">Cliente <span>*</span></label>
+        <input
+            id="cliente-aparelho"
+            type="text"
+            formControlName="cliente"
+            placeholder="Digite o nome do cliente...">
+
+        @if (formulario.controls.cliente.invalid && formulario.controls.cliente.touched) {
+            <small class="erro">Informe o cliente.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="tipo-aparelho">Tipo de aparelho <span>*</span></label>
+        <select id="tipo-aparelho" formControlName="tipo">
+            <option value="">Selecione o tipo</option>
+            <option value="Celular">Celular</option>
+            <option value="Tablet">Tablet</option>
+            <option value="Notebook">Notebook</option>
+            <option value="Computador">Computador</option>
+        </select>
+
+        @if (formulario.controls.tipo.invalid && formulario.controls.tipo.touched) {
+            <small class="erro">Selecione o tipo de aparelho.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="marca-aparelho">Marca <span>*</span></label>
+        <input
+            id="marca-aparelho"
+            type="text"
+            formControlName="marca"
+            placeholder="Digite a marca...">
+
+        @if (formulario.controls.marca.invalid && formulario.controls.marca.touched) {
+            <small class="erro">Informe a marca.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="modelo-aparelho">Modelo <span>*</span></label>
+        <input
+            id="modelo-aparelho"
+            type="text"
+            formControlName="modelo"
+            placeholder="Digite o modelo...">
+
+        @if (formulario.controls.modelo.invalid && formulario.controls.modelo.touched) {
+            <small class="erro">Informe o modelo.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="serie-aparelho">Número de série</label>
+        <input
+            id="serie-aparelho"
+            type="text"
+            formControlName="numeroSerie"
+            placeholder="Número de série do dispositivo">
+    </div>
+
+    <div class="campo-formulario">
+        <label for="status-aparelho">Status <span>*</span></label>
+        <select id="status-aparelho" formControlName="status">
+            <option value="Recebido">Recebido</option>
+            <option value="Em manutenção">Em manutenção</option>
+            <option value="Pronto">Pronto</option>
+            <option value="Entregue">Entregue</option>
+        </select>
+    </div>
+
+    <div class="acoes-formulario">
+        <button
+            type="button"
+            class="btn-cancelar"
+            (click)="cancelar.emit()">
+            Cancelar
+        </button>
+
+        <button type="submit" class="btn-salvar">
+            {{ aparelho() ? 'Salvar alterações' : 'Cadastrar aparelho' }}
+        </button>
+    </div>
+
+</form>

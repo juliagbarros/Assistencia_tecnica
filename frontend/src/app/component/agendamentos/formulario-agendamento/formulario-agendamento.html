@@ -1,0 +1,107 @@
+
+<form
+    class="formulario-agendamento"
+    [formGroup]="formulario"
+    (ngSubmit)="enviar()"
+    novalidate>
+
+    <div class="campo-formulario">
+        <label for="cliente-agendamento">Cliente <span>*</span></label>
+        <input
+            id="cliente-agendamento"
+            formControlName="cliente"
+            placeholder="Nome do cliente">
+
+        @if (formulario.controls.cliente.invalid && formulario.controls.cliente.touched) {
+            <small class="erro">Informe o cliente.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="aparelho-agendamento">Aparelho <span>*</span></label>
+        <input
+            id="aparelho-agendamento"
+            formControlName="aparelho"
+            placeholder="Aparelho vinculado">
+
+        @if (formulario.controls.aparelho.invalid && formulario.controls.aparelho.touched) {
+            <small class="erro">Informe o aparelho.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="tecnico-agendamento">Técnico <span>*</span></label>
+        <input
+            id="tecnico-agendamento"
+            formControlName="tecnico"
+            placeholder="Técnico responsável">
+
+        @if (formulario.controls.tecnico.invalid && formulario.controls.tecnico.touched) {
+            <small class="erro">Informe o técnico.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="servico-agendamento">Serviço <span>*</span></label>
+        <input
+            id="servico-agendamento"
+            formControlName="servico"
+            placeholder="Serviço solicitado">
+
+        @if (formulario.controls.servico.invalid && formulario.controls.servico.touched) {
+            <small class="erro">Informe o serviço.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="data-agendamento">Data <span>*</span></label>
+        <input
+            id="data-agendamento"
+            type="date"
+            formControlName="data">
+
+        @if (formulario.controls.data.invalid && formulario.controls.data.touched) {
+            <small class="erro">Informe a data.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="horario-agendamento">Horário <span>*</span></label>
+        <input
+            id="horario-agendamento"
+            type="time"
+            formControlName="horario">
+
+        @if (formulario.controls.horario.invalid && formulario.controls.horario.touched) {
+            <small class="erro">Informe o horário.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="status-agendamento">Status <span>*</span></label>
+        <select
+            id="status-agendamento"
+            formControlName="status">
+
+            <option value="Agendado">Agendado</option>
+            <option value="Confirmado">Confirmado</option>
+            <option value="Concluído">Concluído</option>
+            <option value="Cancelado">Cancelado</option>
+
+        </select>
+    </div>
+
+    <div class="acoes-formulario">
+        <button
+            type="button"
+            class="btn-cancelar"
+            (click)="cancelar.emit()">
+            Cancelar
+        </button>
+
+        <button type="submit" class="btn-salvar">
+            {{ agendamento() ? 'Salvar alterações' : 'Cadastrar agendamento' }}
+        </button>
+    </div>
+
+</form>

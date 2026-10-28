@@ -1,3 +1,4 @@
+
 <section class="pagina-agendamentos">
 
     <nav class="caminho" aria-label="Caminho de navegação">
@@ -8,13 +9,11 @@
 
     <app-tabela
         titulo="Agendamentos"
-        descricao="Visualize e gerencie os atendimentos agendados."
-        placeholderBusca="Pesquisar cliente, aparelho ou técnico..."
-        textoAdicionar="Novo agendamento"
-
+        descricao="Visualize e gerencie os agendamentos da assistência."
+        placeholderBusca="Pesquisar cliente, técnico ou serviço..."
+        textoAdicionar="Adicionar agendamento"
         [colunas]="colunas"
-        [registros]="registros()"
-
+        [registros]="agendamentos()"
         (adicionar)="adicionarAgendamento()"
         (editar)="editarAgendamento($event)"
         (remover)="removerAgendamento($event)">
@@ -22,60 +21,63 @@
         <div resumo class="indicadores">
 
             <div class="card-indicador">
-
                 <div class="icone-indicador azul">
                     <svg lucideCalendarDays [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
                     <h3>{{ totalAgendamentos() }}</h3>
                     <p>Total de agendamentos</p>
                 </div>
-
             </div>
 
             <div class="card-indicador">
-
-                <div class="icone-indicador amarelo">
+                <div class="icone-indicador verde">
                     <svg lucideClock3 [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
-                    <h3>{{ totalAgendados() }}</h3>
+                    <h3>{{ agendamentosAgendados() }}</h3>
                     <p>Agendados</p>
                 </div>
-
             </div>
 
             <div class="card-indicador">
-
-                <div class="icone-indicador roxo">
+                <div class="icone-indicador amarelo">
                     <svg lucideUserRound [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
-                    <h3>{{ totalConfirmados() }}</h3>
+                    <h3>{{ agendamentosConfirmados() }}</h3>
                     <p>Confirmados</p>
                 </div>
-
             </div>
 
             <div class="card-indicador">
-
-                <div class="icone-indicador verde">
+                <div class="icone-indicador roxo">
                     <svg lucideCircleCheck [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
-                    <h3>{{ totalConcluidos() }}</h3>
+                    <h3>{{ agendamentosConcluidos() }}</h3>
                     <p>Concluídos</p>
                 </div>
-
             </div>
 
         </div>
 
     </app-tabela>
+
+    @if (modalAberto()) {
+        <app-modal
+            [titulo]="agendamentoSelecionado() ? 'Editar agendamento' : 'Cadastrar agendamento'"
+            [descricao]="agendamentoSelecionado() ? 'Atualize as informações do agendamento.' : 'Preencha as informações do novo agendamento.'"
+            (fechar)="fecharModal()">
+
+            <app-formulario-agendamento
+                [agendamento]="agendamentoSelecionado()"
+                (salvar)="salvarAgendamento($event)"
+                (cancelar)="fecharModal()">
+            </app-formulario-agendamento>
+
+        </app-modal>
+    }
 
     @if (mensagem()) {
         <p class="mensagem" role="status">

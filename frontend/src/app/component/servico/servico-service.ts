@@ -1,11 +1,25 @@
+
 import { Injectable, signal } from '@angular/core';
 import { RegistroTabela } from '../../shared/tabela/tabela';
 
+export type StatusServico = 'Ativo' | 'Inativo';
+
 export interface Servico extends RegistroTabela {
     nome: string;
+    categoria: string;
     descricao: string;
-    preco: string;
-    status: string;
+    valor: number;
+    tempoEstimado: string;
+    status: StatusServico;
+}
+
+export interface DadosServico {
+    nome: string;
+    categoria: string;
+    descricao: string;
+    valor: number;
+    tempoEstimado: string;
+    status: StatusServico;
 }
 
 @Injectable({
@@ -16,29 +30,81 @@ export class ServicoService {
     private readonly servicos = signal<Servico[]>([
         {
             id: 1,
-            nome: 'Limpeza interna',
-            descricao: 'Limpeza dos componentes internos',
-            preco: 'R$ 100,00',
-            status: 'Disponível'
+            nome: 'Troca de tela',
+            categoria: 'Celular',
+            descricao: 'Substituição da tela do aparelho',
+            valor: 250,
+            tempoEstimado: '2 horas',
+            status: 'Ativo'
         },
         {
             id: 2,
-            nome: 'Diagnóstico de defeitos',
-            descricao: 'Análise de hardware e software',
-            preco: 'R$ 60,00',
-            status: 'Disponível'
+            nome: 'Limpeza interna',
+            categoria: 'Computador',
+            descricao: 'Limpeza e manutenção preventiva',
+            valor: 100,
+            tempoEstimado: '1 hora',
+            status: 'Ativo'
         },
         {
             id: 3,
-            nome: 'Troca de tela',
-            descricao: 'Substituição de tela danificada',
-            preco: 'R$ 150,00',
-            status: 'Indisponível'
+            nome: 'Formatação',
+            categoria: 'Notebook',
+            descricao: 'Reinstalação do sistema operacional',
+            valor: 150,
+            tempoEstimado: '3 horas',
+            status: 'Ativo'
+        },
+        {
+            id: 4,
+            nome: 'Troca de bateria',
+            categoria: 'Celular',
+            descricao: 'Substituição da bateria',
+            valor: 180,
+            tempoEstimado: '1 hora',
+            status: 'Inativo'
         }
     ]);
 
     listar() {
         return this.servicos.asReadonly();
+    }
+
+    criar(dados: DadosServico): void {
+        const novoId = Math.max(
+            0,
+            ...this.servicos().map(servico => servico.id)
+        ) + 1;
+
+        const novoServico: Servico = {
+            id: novoId,
+            ...dados
+        };
+
+        this.servicos.update(servicos => [
+            ...servicos,
+            novoServico
+        ]);
+    }
+
+    atualizar(id: number, dados: DadosServico): boolean {
+        const existe = this.servicos().some(
+            servico => servico.id === id
+        );
+
+        if (!existe) {
+            return false;
+        }
+
+        this.servicos.update(servicos =>
+            servicos.map(servico =>
+                servico.id === id
+                    ? { ...servico, ...dados }
+                    : servico
+            )
+        );
+
+        return true;
     }
 
     remover(id: number): void {

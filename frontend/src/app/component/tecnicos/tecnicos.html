@@ -1,3 +1,4 @@
+
 <section class="pagina-tecnicos">
 
     <nav class="caminho" aria-label="Caminho de navegação">
@@ -11,10 +12,8 @@
         descricao="Visualize e gerencie os técnicos cadastrados na assistência."
         placeholderBusca="Pesquisar nome, telefone ou especialidade..."
         textoAdicionar="Adicionar técnico"
-
         [colunas]="colunas"
         [registros]="tecnicos()"
-
         (adicionar)="adicionarTecnico()"
         (editar)="editarTecnico($event)"
         (remover)="removerTecnico($event)">
@@ -77,6 +76,22 @@
 
     </app-tabela>
 
+   @if (modalAberto()) {
+
+    <app-modal
+        [titulo]="tecnicoSelecionado() ? 'Editar técnico' : 'Cadastrar técnico'"
+        [descricao]="tecnicoSelecionado() ? 'Atualize as informações do técnico.' : 'Preencha as informações do novo técnico.'"
+        (fechar)="fecharModal()">
+
+        <app-formulario-tecnico
+            [tecnico]="tecnicoSelecionado()"
+            (salvar)="salvarTecnico($event)"
+            (cancelar)="fecharModal()">
+        </app-formulario-tecnico>
+
+    </app-modal>
+
+}
     @if (mensagem()) {
         <p class="mensagem" role="status">
             {{ mensagem() }}
