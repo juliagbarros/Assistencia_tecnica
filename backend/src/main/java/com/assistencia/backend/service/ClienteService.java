@@ -4,6 +4,7 @@ package com.assistencia.backend.service;
 import com.assistencia.backend.exception.BusinessException;
 import com.assistencia.backend.exception.ResourceNotFindException;
 import com.assistencia.backend.model.Cliente;
+import com.assistencia.backend.repository.AgendamentoRepository;
 import com.assistencia.backend.repository.AparelhoRepository;
 import com.assistencia.backend.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ClienteService {
     private final ClienteRepository clienteRepository;
     private final AparelhoRepository aparelhoRepository;
+    private final AgendamentoRepository agendamentoRepository;
 
 
     @Transactional
@@ -48,6 +50,9 @@ public class ClienteService {
         Cliente cliente = buscarPorId(id);
         if (aparelhoRepository.existsByClienteId(id)) {
             throw new BusinessException("Não é possível excluir agora pois o cliente possui aparelhos vinculados à ele.");
+        }
+        if (agendamentoRepository.existsByClienteId(id)) {
+            throw new BusinessException("Não é possível excluir agora pois o cliente possui agendamentos vinculados");
         }
         clienteRepository.delete(cliente);
     }
