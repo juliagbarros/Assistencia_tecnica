@@ -1,4 +1,14 @@
 services:
+  angular:
+    build: ./frontend
+    container_name: assistencia_frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - angular_deps:/app/node_modules
+  
+
   postgres:
     image: postgres:16-alpine
     container_name: assistencia_postgres
