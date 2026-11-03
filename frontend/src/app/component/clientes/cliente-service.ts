@@ -1,6 +1,9 @@
 
 import { Injectable, signal } from '@angular/core';
 import { RegistroTabela } from '../../shared/tabela/tabela';
+import { resetConsumerBeforeComputation } from '@angular/core/primitives/signals';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export type StatusCliente = 'Ativo' | 'Inativo';
 
@@ -23,74 +26,64 @@ export interface DadosCliente {
 })
 export class ClienteService {
 
+    constructor(private http : HttpClient){}
+
+    readonly URL='http://localhost:8080/api/clientes'
+
     private readonly clientes = signal<Cliente[]>([
-        {
-            id: 1,
-            nome: 'Heitor Santana',
-            telefone: '(81) 91234-5678',
-            email: 'heitor@email.com',
-            status: 'Ativo'
-        },
-        {
-            id: 2,
-            nome: 'Júlia Gabrielle Barros',
-            telefone: '(81) 91234-5678',
-            email: 'julia@email.com',
-            status: 'Ativo'
-        },
-        {
-            id: 3,
-            nome: 'João Paulo Menezes',
-            telefone: '(81) 91234-5678',
-            email: 'joao@email.com',
-            status: 'Ativo'
-        }
+        
     ]);
 
     listar() {
-        return this.clientes.asReadonly();
+        this.http.get<Cliente[]>(this.URL).subscribe({
+            next:(res)=>
+            {
+                this.clientes.set(res)
+                console.log(res)
+                console.log(this.clientes)
+            },
+            error:(erro)=>{
+                console.log(erro)
+            }
+        });
+        return this.clientes.asReadonly()
     }
 
     criar(dados: DadosCliente): void {
-        const novoId = Math.max(
-            0,
-            ...this.clientes().map(cliente => cliente.id)
-        ) + 1;
-
-        const novoCliente: Cliente = {
-            id: novoId,
-            ...dados
-        };
-
-        this.clientes.update(clientes => [
-            ...clientes,
-            novoCliente
-        ]);
+        this.http.post<Cliente>(this.URL,dados).subscribe({
+            next:(res)=>{
+                this.clientes.update(clientes => [
+                    ...clientes,res
+                ])
+                console.log(res)
+                console.log(this.clientes)
+            },
+        })
+       
     }
 
-    atualizar(id: number, dados: DadosCliente): boolean {
-        const existe = this.clientes().some(
-            cliente => cliente.id === id
-        );
-
-        if (!existe) {
-            return false;
+   atualizar(id: number, dados: DadosCliente): void {
+    this.http.put<void>(`${this.URL}/${id}`, dados).subscribe({
+        next: () => {
+            this.clientes.update(clientes =>
+                clientes.map(cliente =>
+                    cliente.id === id
+                        ? { ...cliente, ...dados }
+                        : cliente
+                )
+            );
+        },
+        error: (erro) => {
+            console.error('Erro ao atualizar cliente:', erro);
         }
-
-        this.clientes.update(clientes =>
-            clientes.map(cliente =>
-                cliente.id === id
-                    ? { ...cliente, ...dados }
-                    : cliente
-            )
-        );
-
-        return true;
-    }
+    });
+}
 
     remover(id: number): void {
-        this.clientes.update(clientes =>
-            clientes.filter(cliente => cliente.id !== id)
-        );
+       this.http.delete(this.URL+'/'+id).subscribe({
+        next:()=> {
+            this.clientes.update(clientes => clientes.filter(cliente => cliente.id !==id  ))
+        }
+       })
     }
 }

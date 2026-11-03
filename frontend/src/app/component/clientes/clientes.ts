@@ -94,10 +94,7 @@ export class Clientes {
                 dados
             );
 
-            if (!atualizado) {
-                this.mensagem.set('Cliente não encontrado.');
-                return;
-            }
+            
 
             this.mensagem.set('Cliente atualizado com sucesso.');
         } else {
