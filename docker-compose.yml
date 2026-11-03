@@ -27,4 +27,5 @@ services:
       timeout: 5s
       retries: 5
 volumes:
+  angular_deps:
   postgres_data:
