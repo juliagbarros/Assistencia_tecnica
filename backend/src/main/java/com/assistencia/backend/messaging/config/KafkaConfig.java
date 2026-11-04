@@ -8,8 +8,8 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaConfig {
     @Bean
-    public NewTopic ordemConcluidaTopic(){
-        return TopicBuilder.name("ordem_servico_concluida").partitions(1).replicas(1).build();
+    public NewTopic ordemSituacaoAlteradaTopic(){
+        return TopicBuilder.name("ordem_situacao_alterada").partitions(1).replicas(1).build();
     }
 
 }
