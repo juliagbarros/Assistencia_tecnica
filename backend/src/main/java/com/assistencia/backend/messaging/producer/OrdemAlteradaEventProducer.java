@@ -1,25 +1,25 @@
 package com.assistencia.backend.messaging.producer;
 
-import com.assistencia.backend.messaging.event.OrdemConcluidaEvent;
+import com.assistencia.backend.messaging.event.OrdemSituacaoAlteradaEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
 @Component
-public class OrdemConcluidaEventProducer {
+public class OrdemAlteradaEventProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${topico.ordem-concluida.nome}")
+    @Value("${topico.ordem-situacao-alterada.nome}")
     private String topico;
 
-    public OrdemConcluidaEventProducer(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+    public OrdemAlteradaEventProducer(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
         this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;
     }
 
-    public void publicarConclusao(OrdemConcluidaEvent evento) {
+    public void publicarAlteracao(OrdemSituacaoAlteradaEvent evento) {
         try {
             String json = objectMapper.writeValueAsString(evento);
             kafkaTemplate.send(topico, evento.ordemId().toString(), json);
@@ -28,3 +28,4 @@ public class OrdemConcluidaEventProducer {
         }
     }
 }
+

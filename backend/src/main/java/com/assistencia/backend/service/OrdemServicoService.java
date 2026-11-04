@@ -4,8 +4,8 @@ import com.assistencia.backend.dto.OrdemRequest;
 import com.assistencia.backend.dto.OrdemUpdateRequest;
 import com.assistencia.backend.exception.BusinessException;
 import com.assistencia.backend.exception.ResourceNotFindException;
-import com.assistencia.backend.messaging.event.OrdemConcluidaEvent;
-import com.assistencia.backend.messaging.producer.OrdemConcluidaEventProducer;
+import com.assistencia.backend.messaging.event.OrdemSituacaoAlteradaEvent;
+import com.assistencia.backend.messaging.producer.OrdemAlteradaEventProducer;
 import com.assistencia.backend.model.*;
 import com.assistencia.backend.repository.AparelhoRepository;
 import com.assistencia.backend.repository.ItemOrdemRepository;
@@ -26,7 +26,7 @@ public class OrdemServicoService {
     private final AparelhoRepository aparelhoRepository;
     private final TecnicoRepository tecnicoRepository;
     private final ItemOrdemRepository itemRepository;
-    private final OrdemConcluidaEventProducer producer;
+    private final OrdemAlteradaEventProducer producer;
 
     @Transactional
     public OrdemServico abrir(OrdemRequest dados) {
@@ -46,7 +46,9 @@ public class OrdemServicoService {
         ordem.setDefeitoRelatado(dados.getDefeitoRelatado());
         ordem.setSituacao(SituacaoOrdem.Aberta);
         ordem.setDataAbertura(LocalDateTime.now());
-        return ordemRepository.save(ordem);
+        ordem= ordemRepository.save(ordem);
+        publicarEventoSituacao(ordem, null);
+        return ordem;
     }
 
     @Transactional(readOnly = true)
@@ -93,18 +95,8 @@ public class OrdemServicoService {
         ordem.setSituacao(destino);
         if (destino == SituacaoOrdem.Concluida) {
             ordem.setDataConclusao(LocalDateTime.now());
-            Cliente cliente = ordem.getAparelho().getCliente();
-            producer.publicarConclusao(new OrdemConcluidaEvent(
-                    ordem.getId(),
-                    cliente.getNome(),
-                    cliente.getEmail(),
-                    ordem.getAparelho().getTipo(),
-                    ordem.getDataConclusao()));
         }
-
-        if (destino == SituacaoOrdem.Entregue) {
-            ordem.setDataEntrega(LocalDateTime.now());
-        }
+        publicarEventoSituacao(ordem, atual);
         return ordem;
     }
 
@@ -150,5 +142,19 @@ public class OrdemServicoService {
     }
     private boolean encerrada(SituacaoOrdem situacao) {
         return situacao == SituacaoOrdem.Entregue || situacao == SituacaoOrdem.Cancelada;
+    }
+
+    private void publicarEventoSituacao(OrdemServico ordem, SituacaoOrdem anterior) {
+        Cliente cliente = ordem.getAparelho().getCliente();
+        OrdemSituacaoAlteradaEvent evento = new OrdemSituacaoAlteradaEvent(
+                ordem.getId(),
+                cliente.getNome(),
+                cliente.getEmail(),
+                ordem.getAparelho().getTipo(),
+                anterior,
+                ordem.getSituacao(),
+                LocalDateTime.now()
+        );
+        producer.publicarAlteracao(evento);
     }
 }
