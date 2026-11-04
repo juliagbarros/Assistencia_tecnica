@@ -73,6 +73,24 @@
         color-scheme: dark;
     }
 
+    textarea {
+        width: 100%;
+        min-height: 90px;
+        padding: 0.8rem 1rem;
+        background: var(--cor-input);
+        color: var(--cor-texto);
+        border: 1px solid var(--cor-borda-azul);
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        resize: vertical;
+        outline: none;
+
+        &:focus {
+            border-color: var(--cor-destaque);
+        }
+    }
+
     .erro {
         color: var(--cor-perigo);
         font-size: 0.75rem;
@@ -128,6 +146,8 @@
         }
     }
 }
+
+
 
 @media (max-width: 600px) {
     .formulario-agendamento {

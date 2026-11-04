@@ -1,4 +1,5 @@
-import { Component, computed, inject } from '@angular/core';
+
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import {
@@ -8,11 +9,11 @@ import {
     LucideCalendarDays,
     LucideArrowRight
 } from '@lucide/angular';
+
 import { ClienteService } from '../clientes/cliente-service';
 import { OrdemService } from '../ordens/orderns-service';
-import { AparelhoService } from '../aparelhos/aparelhos-service';
 import { AgendamentoService } from '../agendamentos/agendamento-service';
-
+import { AparelhoService } from '../aparelhos/aparelhos-service';
 
 @Component({
     selector: 'app-painel',
@@ -27,7 +28,7 @@ import { AgendamentoService } from '../agendamentos/agendamento-service';
     templateUrl: './painel.html',
     styleUrl: './painel.scss'
 })
-export class Painel {
+export class Painel implements OnInit {
 
     private readonly clienteService = inject(ClienteService);
     private readonly ordemService = inject(OrdemService);
@@ -58,40 +59,90 @@ export class Painel {
     );
 
     readonly ordensEmAtendimento = computed(() =>
-        this.ordens().filter(
-            ordem => ordem.status === 'Em atendimento'
-        ).length
+        this.ordens().filter(ordem => {
+            const situacao = this.normalizarSituacao(ordem.situacao);
+
+            return situacao === 'EM_ATENDIMENTO' ||
+                   situacao === 'EM_ANDAMENTO';
+        }).length
+    );
+
+    readonly agendamentosFuturos = computed(() =>
+        this.agendamentos()
+            .filter(agendamento => {
+
+                const data = agendamento.inicio?.slice(0, 10);
+
+                const situacao = this.normalizarSituacao(
+                    agendamento.situacao
+                );
+
+                return data >= this.hojeISO &&
+                    (
+                        situacao === 'AGENDADO' ||
+                        situacao === 'CONFIRMADO'
+                    );
+            })
+            .sort((a, b) =>
+                a.inicio.localeCompare(b.inicio)
+            )
     );
 
     readonly proximosAgendamentos = computed(() =>
-        this.agendamentos()
-            .filter(agendamento =>
-                agendamento.data >= this.hojeISO &&
-                (
-                    agendamento.status === 'Agendado' ||
-                    agendamento.status === 'Confirmado'
-                )
-            )
-            .sort((a, b) =>
-                `${a.data}T${a.horario}`.localeCompare(
-                    `${b.data}T${b.horario}`
-                )
-            )
+        this.agendamentosFuturos()
             .slice(0, 5)
+            .map(agendamento => ({
+                ...agendamento,
+
+                cliente: agendamento.cliente?.nome ??
+                    `Cliente #${agendamento.cliente?.id}`,
+
+                tecnico: agendamento.tecnico?.nome ??
+                    `Técnico #${agendamento.tecnico?.id}`,
+
+                data: agendamento.inicio.slice(0, 10),
+
+                horario: agendamento.inicio.slice(11, 16),
+
+                status: this.formatarSituacao(
+                    agendamento.situacao
+                )
+            }))
     );
 
     readonly totalAgendamentosFuturos = computed(() =>
-        this.proximosAgendamentos().length
+        this.agendamentosFuturos().length
     );
 
     readonly ordensRecentes = computed(() =>
         [...this.ordens()]
             .sort((a, b) =>
-                this.chaveDataBR(b.abertura).localeCompare(
-                    this.chaveDataBR(a.abertura)
-                )
+                b.dataAbertura.localeCompare(a.dataAbertura)
             )
             .slice(0, 5)
+            .map(ordem => ({
+                ...ordem,
+
+                numero: `OS-${String(ordem.id).padStart(4, '0')}`,
+
+                cliente: ordem.aparelho?.cliente?.nome ??
+                    `Cliente #${ordem.aparelho?.cliente?.id ?? '?'}`,
+
+                aparelho: [
+                    ordem.aparelho?.marca,
+                    ordem.aparelho?.modelo
+                ].filter(Boolean).join(' ') ||
+                    `Aparelho #${ordem.aparelho?.id}`,
+
+                tecnico: ordem.tecnico?.nome ??
+                    `Técnico #${ordem.tecnico?.id}`,
+
+                abertura: this.formatarData(ordem.dataAbertura),
+
+                status: this.formatarSituacao(
+                    ordem.situacao
+                )
+            }))
     );
 
     readonly distribuicaoOrdens = computed(() => {
@@ -100,20 +151,44 @@ export class Painel {
         const total = ordens.length;
 
         const situacoes = [
-            { nome: 'Abertas', status: 'Aberta', classe: 'aberta' },
-            { nome: 'Em atendimento', status: 'Em atendimento', classe: 'andamento' },
-            { nome: 'Concluídas', status: 'Concluída', classe: 'concluida' },
-            { nome: 'Entregues', status: 'Entregue', classe: 'entregue' }
+            {
+                nome: 'Abertas',
+                status: 'Aberta',
+                classe: 'aberta',
+                valores: ['ABERTA']
+            },
+            {
+                nome: 'Em atendimento',
+                status: 'Em atendimento',
+                classe: 'andamento',
+                valores: ['EM_ATENDIMENTO', 'EM_ANDAMENTO']
+            },
+            {
+                nome: 'Concluídas',
+                status: 'Concluída',
+                classe: 'concluida',
+                valores: ['CONCLUIDA']
+            },
+            {
+                nome: 'Entregues',
+                status: 'Entregue',
+                classe: 'entregue',
+                valores: ['ENTREGUE']
+            }
         ];
 
         return situacoes.map(situacao => {
 
-            const quantidade = ordens.filter(
-                ordem => ordem.status === situacao.status
+            const quantidade = ordens.filter(ordem =>
+                situacao.valores.includes(
+                    this.normalizarSituacao(ordem.situacao)
+                )
             ).length;
 
             return {
-                ...situacao,
+                nome: situacao.nome,
+                status: situacao.status,
+                classe: situacao.classe,
                 quantidade,
                 percentual: total > 0
                     ? Math.round((quantidade / total) * 100)
@@ -122,8 +197,37 @@ export class Painel {
         });
     });
 
-    private chaveDataBR(data: string): string {
-        return data.split('/').reverse().join('-');
+    ngOnInit(): void {
+        this.ordemService.carregar();
+        this.aparelhoService.carregar();
+        this.agendamentoService.carregar();
+    }
+
+    private normalizarSituacao(situacao: string): string {
+        return (situacao ?? '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim()
+            .toUpperCase()
+            .replace(/[\s-]+/g, '_');
+    }
+
+    private formatarSituacao(situacao: string): string {
+        const valor = this.normalizarSituacao(situacao);
+
+        const nomes: Record<string, string> = {
+            ABERTA: 'Aberta',
+            EM_ATENDIMENTO: 'Em atendimento',
+            EM_ANDAMENTO: 'Em andamento',
+            CONCLUIDA: 'Concluída',
+            ENTREGUE: 'Entregue',
+            AGENDADO: 'Agendado',
+            CONFIRMADO: 'Confirmado',
+            CONCLUIDO: 'Concluído',
+            CANCELADO: 'Cancelado'
+        };
+
+        return nomes[valor] ?? situacao.replace(/_/g, ' ');
     }
 
     private obterDataLocalISO(): string {
@@ -137,7 +241,18 @@ export class Painel {
     }
 
     formatarData(data: string): string {
-        const [ano, mes, dia] = data.split('-');
+        if (!data) {
+            return '';
+        }
+
+        const dataISO = data.slice(0, 10);
+        const partes = dataISO.split('-');
+
+        if (partes.length !== 3) {
+            return data;
+        }
+
+        const [ano, mes, dia] = partes;
 
         return `${dia}/${mes}/${ano}`;
     }

@@ -1,5 +1,11 @@
 
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    computed,
+    inject,
+    signal
+} from '@angular/core';
 
 import {
     LucideCalendarDays,
@@ -8,7 +14,11 @@ import {
     LucideUserRound
 } from '@lucide/angular';
 
-import { ColunaTabela, Tabela } from '../../shared/tabela/tabela';
+import {
+    ColunaTabela,
+    RegistroTabela,
+    Tabela
+} from '../../shared/tabela/tabela';
 
 import {
     Agendamento,
@@ -17,6 +27,7 @@ import {
 } from './agendamento-service';
 
 import { Modal } from '../../shared/modal/modal';
+
 import { FormularioAgendamento } from './formulario-agendamento/formulario-agendamento';
 
 @Component({
@@ -33,7 +44,7 @@ import { FormularioAgendamento } from './formulario-agendamento/formulario-agend
     templateUrl: './agendamentos.html',
     styleUrl: './agendamentos.scss'
 })
-export class Agendamentos {
+export class Agendamentos implements OnInit {
 
     private readonly agendamentoService = inject(AgendamentoService);
 
@@ -44,13 +55,26 @@ export class Agendamentos {
 
     readonly colunas: ColunaTabela[] = [
         { chave: 'cliente', titulo: 'Cliente' },
-        { chave: 'aparelho', titulo: 'Aparelho' },
         { chave: 'tecnico', titulo: 'Técnico' },
-        { chave: 'servico', titulo: 'Serviço' },
-        { chave: 'data', titulo: 'Data' },
-        { chave: 'horario', titulo: 'Horário' },
-        { chave: 'status', titulo: 'Status', tipo: 'status' }
+        { chave: 'inicio', titulo: 'Início' },
+        { chave: 'fim', titulo: 'Fim' },
+        { chave: 'motivo', titulo: 'Motivo' },
+        { chave: 'status', titulo: 'Situação', tipo: 'status' }
     ];
+
+    readonly registros = computed<RegistroTabela[]>(() =>
+        this.agendamentos().map(agendamento => ({
+            id: agendamento.id,
+            cliente: agendamento.cliente?.nome ??
+                `Cliente #${agendamento.cliente?.id}`,
+            tecnico: agendamento.tecnico?.nome ??
+                `Técnico #${agendamento.tecnico?.id}`,
+            inicio: agendamento.inicio?.slice(0, 16).replace('T', ' ') ?? '',
+            fim: agendamento.fim?.slice(0, 16).replace('T', ' ') ?? '',
+            motivo: agendamento.motivo,
+            status: agendamento.situacao
+        }))
+    );
 
     readonly totalAgendamentos = computed(() =>
         this.agendamentos().length
@@ -58,23 +82,27 @@ export class Agendamentos {
 
     readonly agendamentosAgendados = computed(() =>
         this.agendamentos().filter(agendamento =>
-            agendamento.status === 'Agendado'
+            agendamento.situacao === 'AGENDADO'
         ).length
     );
 
     readonly agendamentosConfirmados = computed(() =>
         this.agendamentos().filter(agendamento =>
-            agendamento.status === 'Confirmado'
+            agendamento.situacao === 'CONFIRMADO'
         ).length
     );
 
     readonly agendamentosConcluidos = computed(() =>
         this.agendamentos().filter(agendamento =>
-            agendamento.status === 'Concluído'
+            agendamento.situacao === 'CONCLUIDO'
         ).length
     );
 
     readonly mensagem = signal('');
+
+    ngOnInit(): void {
+        this.agendamentoService.carregar();
+    }
 
     adicionarAgendamento(): void {
         this.agendamentoSelecionado.set(null);
@@ -99,40 +127,53 @@ export class Agendamentos {
         const agendamento = this.agendamentoSelecionado();
 
         if (agendamento) {
-            const atualizado = this.agendamentoService.atualizar(
-                agendamento.id,
-                dados
-            );
+            this.agendamentoService.atualizar(agendamento.id, dados).subscribe({
+                next: () => {
+                    this.agendamentoService.carregar();
+                    this.mensagem.set('Agendamento atualizado com sucesso.');
+                    this.fecharModal();
+                },
+                error: (erro) => {
+                    console.error(erro);
+                    this.mensagem.set('Erro ao atualizar agendamento.');
+                }
+            });
 
-            if (!atualizado) {
-                this.mensagem.set('Agendamento não encontrado.');
-                return;
-            }
-
-            this.mensagem.set('Agendamento atualizado com sucesso.');
-        } else {
-            this.agendamentoService.criar(dados);
-            this.mensagem.set('Agendamento cadastrado com sucesso.');
+            return;
         }
 
-        this.fecharModal();
+        this.agendamentoService.criar(dados).subscribe({
+            next: () => {
+                this.agendamentoService.carregar();
+                this.mensagem.set('Agendamento cadastrado com sucesso.');
+                this.fecharModal();
+            },
+            error: (erro) => {
+                console.error(erro);
+                this.mensagem.set('Erro ao cadastrar agendamento.');
+            }
+        });
+    }
+
+    removerAgendamento(id: number): void {
+        if (!window.confirm('Deseja remover este agendamento?')) {
+            return;
+        }
+
+        this.agendamentoService.remover(id).subscribe({
+            next: () => {
+                this.agendamentoService.carregar();
+                this.mensagem.set('Agendamento removido com sucesso.');
+            },
+            error: (erro) => {
+                console.error(erro);
+                this.mensagem.set('Erro ao remover agendamento.');
+            }
+        });
     }
 
     fecharModal(): void {
         this.modalAberto.set(false);
         this.agendamentoSelecionado.set(null);
-    }
-
-    removerAgendamento(id: number): void {
-        const confirmado = window.confirm(
-            'Deseja remover este agendamento dos dados de demonstração?'
-        );
-
-        if (!confirmado) {
-            return;
-        }
-
-        this.agendamentoService.remover(id);
-        this.mensagem.set('Agendamento removido dos dados de demonstração.');
     }
 }

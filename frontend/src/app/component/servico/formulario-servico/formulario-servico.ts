@@ -33,26 +33,17 @@ export class FormularioServico {
             validators: [Validators.required]
         }),
 
-        categoria: new FormControl('', {
-            nonNullable: true,
-            validators: [Validators.required]
-        }),
 
         descricao: new FormControl('', {
             nonNullable: true
         }),
 
-        valor: new FormControl(0, {
+        precoPadrao: new FormControl(0, {
             nonNullable: true,
             validators: [
                 Validators.required,
                 Validators.min(0)
             ]
-        }),
-
-        tempoEstimado: new FormControl('', {
-            nonNullable: true,
-            validators: [Validators.required]
         }),
 
         status: new FormControl<StatusServico>('Ativo', {
@@ -67,10 +58,8 @@ export class FormularioServico {
 
             this.formulario.reset({
                 nome: servico?.nome ?? '',
-                categoria: servico?.categoria ?? '',
                 descricao: servico?.descricao ?? '',
-                valor: servico?.valor ?? 0,
-                tempoEstimado: servico?.tempoEstimado ?? '',
+                precoPadrao: servico?.precoPadrao ?? 0,
                 status: servico?.status ?? 'Ativo'
             });
         });

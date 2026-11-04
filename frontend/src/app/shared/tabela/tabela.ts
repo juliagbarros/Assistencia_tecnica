@@ -36,12 +36,10 @@ titulo = input.required<string>();
     placeholderBusca = input('Digite para pesquisar...');
     textoAdicionar = input('Adicionar');
 
-    // Eventos enviados para a página
     adicionar = output<void>();
     editar = output<number>();
     remover = output<number>();
 
-    // Estados internos da tabela
     busca = signal('');
     statusSelecionado = signal('Todos');
 
@@ -50,7 +48,6 @@ titulo = input.required<string>();
 
     selecionados = signal<number[]>([]);
 
-    // Opções de status obtidas dos registros
     opcoesStatus = computed(() => {
         const status = this.registros()
             .map(registro => String(registro['status'] ?? ''))
@@ -59,7 +56,6 @@ titulo = input.required<string>();
         return [...new Set(status)];
     });
 
-    // Aplica pesquisa e filtro de status
     registrosFiltrados = computed(() => {
         const texto = this.busca().trim().toLocaleLowerCase('pt-BR');
         const status = this.statusSelecionado();
@@ -79,7 +75,6 @@ titulo = input.required<string>();
         });
     });
 
-    // Quantidade total de páginas
     totalPaginas = computed(() => {
         return Math.max(
             1,
@@ -90,7 +85,6 @@ titulo = input.required<string>();
         );
     });
 
-    // Evita exibir um número de página inexistente
     paginaVisivel = computed(() => {
         return Math.min(
             this.paginaAtual(),
@@ -98,7 +92,6 @@ titulo = input.required<string>();
         );
     });
 
-    // Registros apresentados na página atual
     registrosPaginados = computed(() => {
         const inicio =
             (this.paginaVisivel() - 1) *

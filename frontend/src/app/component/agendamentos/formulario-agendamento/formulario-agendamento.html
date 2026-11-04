@@ -7,88 +7,101 @@
 
     <div class="campo-formulario">
         <label for="cliente-agendamento">Cliente <span>*</span></label>
-        <input
+
+        <select
             id="cliente-agendamento"
-            formControlName="cliente"
-            placeholder="Nome do cliente">
+            formControlName="clienteId">
 
-        @if (formulario.controls.cliente.invalid && formulario.controls.cliente.touched) {
-            <small class="erro">Informe o cliente.</small>
-        }
-    </div>
+            <option [ngValue]="null">Selecione o cliente</option>
 
-    <div class="campo-formulario">
-        <label for="aparelho-agendamento">Aparelho <span>*</span></label>
-        <input
-            id="aparelho-agendamento"
-            formControlName="aparelho"
-            placeholder="Aparelho vinculado">
+            @for (cliente of clientes(); track cliente.id) {
+                <option [ngValue]="cliente.id">
+                    {{ cliente.nome }}
+                </option>
+            }
+        </select>
 
-        @if (formulario.controls.aparelho.invalid && formulario.controls.aparelho.touched) {
-            <small class="erro">Informe o aparelho.</small>
+        @if (formulario.controls.clienteId.invalid && formulario.controls.clienteId.touched) {
+            <small class="erro">Selecione o cliente.</small>
         }
     </div>
 
     <div class="campo-formulario">
         <label for="tecnico-agendamento">Técnico <span>*</span></label>
-        <input
-            id="tecnico-agendamento"
-            formControlName="tecnico"
-            placeholder="Técnico responsável">
 
-        @if (formulario.controls.tecnico.invalid && formulario.controls.tecnico.touched) {
-            <small class="erro">Informe o técnico.</small>
-        }
-    </div>
-
-    <div class="campo-formulario">
-        <label for="servico-agendamento">Serviço <span>*</span></label>
-        <input
-            id="servico-agendamento"
-            formControlName="servico"
-            placeholder="Serviço solicitado">
-
-        @if (formulario.controls.servico.invalid && formulario.controls.servico.touched) {
-            <small class="erro">Informe o serviço.</small>
-        }
-    </div>
-
-    <div class="campo-formulario">
-        <label for="data-agendamento">Data <span>*</span></label>
-        <input
-            id="data-agendamento"
-            type="date"
-            formControlName="data">
-
-        @if (formulario.controls.data.invalid && formulario.controls.data.touched) {
-            <small class="erro">Informe a data.</small>
-        }
-    </div>
-
-    <div class="campo-formulario">
-        <label for="horario-agendamento">Horário <span>*</span></label>
-        <input
-            id="horario-agendamento"
-            type="time"
-            formControlName="horario">
-
-        @if (formulario.controls.horario.invalid && formulario.controls.horario.touched) {
-            <small class="erro">Informe o horário.</small>
-        }
-    </div>
-
-    <div class="campo-formulario">
-        <label for="status-agendamento">Status <span>*</span></label>
         <select
-            id="status-agendamento"
-            formControlName="status">
+            id="tecnico-agendamento"
+            formControlName="tecnicoId">
 
-            <option value="Agendado">Agendado</option>
-            <option value="Confirmado">Confirmado</option>
-            <option value="Concluído">Concluído</option>
-            <option value="Cancelado">Cancelado</option>
+            <option [ngValue]="null">Selecione o técnico</option>
 
+            @for (tecnico of tecnicos(); track tecnico.id) {
+                <option [ngValue]="tecnico.id">
+                    {{ tecnico.nome }}
+                </option>
+            }
         </select>
+
+        @if (formulario.controls.tecnicoId.invalid && formulario.controls.tecnicoId.touched) {
+            <small class="erro">Selecione o técnico.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="inicio-agendamento">Início <span>*</span></label>
+
+        <input
+            id="inicio-agendamento"
+            type="datetime-local"
+            formControlName="inicio">
+
+        @if (formulario.controls.inicio.invalid && formulario.controls.inicio.touched) {
+            <small class="erro">Informe o início do agendamento.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="fim-agendamento">Fim <span>*</span></label>
+
+        <input
+            id="fim-agendamento"
+            type="datetime-local"
+            formControlName="fim">
+
+        @if (formulario.controls.fim.invalid && formulario.controls.fim.touched) {
+            <small class="erro">Informe o término do agendamento.</small>
+        }
+
+        @if (erroIntervalo()) {
+            <small class="erro">{{ erroIntervalo() }}</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="motivo-agendamento">Motivo <span>*</span></label>
+
+        <textarea
+            id="motivo-agendamento"
+            formControlName="motivo"
+            rows="3"
+            placeholder="Informe o motivo do agendamento"></textarea>
+
+        @if (formulario.controls.motivo.invalid && formulario.controls.motivo.touched) {
+            <small class="erro">Informe o motivo.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="situacao-agendamento">Situação <span>*</span></label>
+
+        <input
+            id="situacao-agendamento"
+            formControlName="situacao"
+            placeholder="Valor exato do enum SituacaoAgendamento">
+
+        @if (formulario.controls.situacao.invalid && formulario.controls.situacao.touched) {
+            <small class="erro">Informe a situação.</small>
+        }
     </div>
 
     <div class="acoes-formulario">

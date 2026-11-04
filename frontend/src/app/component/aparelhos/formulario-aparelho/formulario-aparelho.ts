@@ -1,5 +1,11 @@
 
-import { Component, effect, input, output } from '@angular/core';
+import {
+    Component,
+    effect,
+    inject,
+    input,
+    output
+} from '@angular/core';
 
 import {
     FormControl,
@@ -8,7 +14,11 @@ import {
     Validators
 } from '@angular/forms';
 
-import { Aparelho,DadosAparelho,StatusAparelho } from '../aparelhos-service';
+
+
+import { ClienteService } from '../../clientes/cliente-service';
+import { Aparelho, DadosAparelho } from '../aparelhos-service';
+
 @Component({
     selector: 'app-formulario-aparelho',
     imports: [ReactiveFormsModule],
@@ -17,14 +27,17 @@ import { Aparelho,DadosAparelho,StatusAparelho } from '../aparelhos-service';
 })
 export class FormularioAparelho {
 
+    private readonly clienteService = inject(ClienteService);
+
+    readonly clientes = this.clienteService.listar();
+
     aparelho = input<Aparelho | null>(null);
 
     salvar = output<DadosAparelho>();
     cancelar = output<void>();
 
     readonly formulario = new FormGroup({
-        cliente: new FormControl('', {
-            nonNullable: true,
+        clienteId: new FormControl<number | null>(null, {
             validators: [Validators.required]
         }),
         tipo: new FormControl('', {
@@ -42,9 +55,8 @@ export class FormularioAparelho {
         numeroSerie: new FormControl('', {
             nonNullable: true
         }),
-        status: new FormControl<StatusAparelho>('Recebido', {
-            nonNullable: true,
-            validators: [Validators.required]
+        observacoes: new FormControl('', {
+            nonNullable: true
         })
     });
 
@@ -53,12 +65,12 @@ export class FormularioAparelho {
             const aparelho = this.aparelho();
 
             this.formulario.reset({
-                cliente: aparelho?.cliente ?? '',
+                clienteId: aparelho?.cliente?.id ?? null,
                 tipo: aparelho?.tipo ?? '',
                 marca: aparelho?.marca ?? '',
                 modelo: aparelho?.modelo ?? '',
                 numeroSerie: aparelho?.numeroSerie ?? '',
-                status: aparelho?.status ?? 'Recebido'
+                observacoes: aparelho?.observacoes ?? ''
             });
         });
     }
@@ -69,6 +81,19 @@ export class FormularioAparelho {
             return;
         }
 
-        this.salvar.emit(this.formulario.getRawValue());
+        const dados = this.formulario.getRawValue();
+
+        if (dados.clienteId === null) {
+            return;
+        }
+
+        this.salvar.emit({
+        clienteId: dados.clienteId,
+        tipo: dados.tipo,
+        marca: dados.marca,
+        modelo: dados.modelo,
+        numeroSerie: dados.numeroSerie || null,
+        observacoes: dados.observacoes || null
+    });
     }
 }

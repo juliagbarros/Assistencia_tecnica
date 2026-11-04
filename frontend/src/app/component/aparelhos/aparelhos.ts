@@ -1,6 +1,11 @@
 
-import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import {
+    Component,
+    OnInit,
+    computed,
+    inject,
+    signal
+} from '@angular/core';
 
 import {
     LucideTablet,
@@ -9,19 +14,21 @@ import {
     LucideMonitor
 } from '@lucide/angular';
 
-import { ColunaTabela, Tabela } from '../../shared/tabela/tabela';
+import {
+    ColunaTabela,
+    RegistroTabela,
+    Tabela
+} from '../../shared/tabela/tabela';
+
+
 import { Modal } from '../../shared/modal/modal';
 
-import { Aparelho, DadosAparelho, AparelhoService } from './aparelhos-service';
-
-import {
-    FormularioAparelho
-} from './formulario-aparelho/formulario-aparelho';
+import { FormularioAparelho } from './formulario-aparelho/formulario-aparelho';
+import { AparelhoService, Aparelho, DadosAparelho } from './aparelhos-service';
 
 @Component({
     selector: 'app-aparelhos',
     imports: [
-        RouterLink,
         Tabela,
         Modal,
         FormularioAparelho,
@@ -33,7 +40,7 @@ import {
     templateUrl: './aparelhos.html',
     styleUrl: './aparelhos.scss'
 })
-export class Aparelhos {
+export class Aparelhos implements OnInit {
 
     private readonly aparelhoService = inject(AparelhoService);
 
@@ -41,7 +48,6 @@ export class Aparelhos {
 
     readonly modalAberto = signal(false);
     readonly aparelhoSelecionado = signal<Aparelho | null>(null);
-    readonly mensagem = signal('');
 
     readonly colunas: ColunaTabela[] = [
         { chave: 'cliente', titulo: 'Cliente' },
@@ -49,30 +55,48 @@ export class Aparelhos {
         { chave: 'marca', titulo: 'Marca' },
         { chave: 'modelo', titulo: 'Modelo' },
         { chave: 'numeroSerie', titulo: 'Número de série' },
-        { chave: 'status', titulo: 'Status', tipo: 'status' }
+        { chave: 'observacoes', titulo: 'Observações' }
     ];
+
+    readonly registros = computed<RegistroTabela[]>(() =>
+        this.aparelhos().map(aparelho => ({
+            id: aparelho.id,
+            cliente: aparelho.cliente?.nome ?? `Cliente #${aparelho.cliente?.id}`,
+            tipo: aparelho.tipo,
+            marca: aparelho.marca,
+            modelo: aparelho.modelo,
+            numeroSerie: aparelho.numeroSerie ?? '',
+            observacoes: aparelho.observacoes ?? ''
+        }))
+    );
 
     readonly totalAparelhos = computed(() =>
         this.aparelhos().length
     );
 
-    readonly emManutencao = computed(() =>
-        this.aparelhos().filter(
-            aparelho => aparelho.status === 'Em manutenção'
+    readonly totalTipos = computed(() =>
+        new Set(
+            this.aparelhos().map(aparelho => aparelho.tipo)
+        ).size
+    );
+
+    readonly totalMarcas = computed(() =>
+        new Set(
+            this.aparelhos().map(aparelho => aparelho.marca)
+        ).size
+    );
+
+    readonly aparelhosComObservacoes = computed(() =>
+        this.aparelhos().filter(aparelho =>
+            !!aparelho.observacoes?.trim()
         ).length
     );
 
-    readonly aparelhosProntos = computed(() =>
-        this.aparelhos().filter(
-            aparelho => aparelho.status === 'Pronto'
-        ).length
-    );
+    readonly mensagem = signal('');
 
-    readonly aparelhosEntregues = computed(() =>
-        this.aparelhos().filter(
-            aparelho => aparelho.status === 'Entregue'
-        ).length
-    );
+    ngOnInit(): void {
+        this.aparelhoService.carregar();
+    }
 
     adicionarAparelho(): void {
         this.aparelhoSelecionado.set(null);
@@ -97,38 +121,53 @@ export class Aparelhos {
         const aparelho = this.aparelhoSelecionado();
 
         if (aparelho) {
-            const atualizado = this.aparelhoService.atualizar(
-                aparelho.id,
-                dados
-            );
+            this.aparelhoService.atualizar(aparelho.id, dados).subscribe({
+                next: () => {
+                    this.aparelhoService.carregar();
+                    this.mensagem.set('Aparelho atualizado com sucesso.');
+                    this.fecharModal();
+                },
+                error: (erro) => {
+                    console.error(erro);
+                    this.mensagem.set('Erro ao atualizar aparelho.');
+                }
+            });
 
-            if (!atualizado) {
-                this.mensagem.set('Aparelho não encontrado.');
-                return;
-            }
-
-            this.mensagem.set('Aparelho atualizado com sucesso.');
-        } else {
-            this.aparelhoService.criar(dados);
-            this.mensagem.set('Aparelho cadastrado com sucesso.');
+            return;
         }
 
-        this.fecharModal();
+        this.aparelhoService.criar(dados).subscribe({
+            next: () => {
+                this.aparelhoService.carregar();
+                this.mensagem.set('Aparelho cadastrado com sucesso.');
+                this.fecharModal();
+            },
+            error: (erro) => {
+                console.error(erro);
+                this.mensagem.set('Erro ao cadastrar aparelho.');
+            }
+        });
+    }
+
+    removerAparelho(id: number): void {
+        if (!window.confirm('Deseja remover este aparelho?')) {
+            return;
+        }
+
+        this.aparelhoService.remover(id).subscribe({
+            next: () => {
+                this.aparelhoService.carregar();
+                this.mensagem.set('Aparelho removido com sucesso.');
+            },
+            error: (erro) => {
+                console.error(erro);
+                this.mensagem.set('Erro ao remover aparelho.');
+            }
+        });
     }
 
     fecharModal(): void {
         this.modalAberto.set(false);
         this.aparelhoSelecionado.set(null);
-    }
-
-    removerAparelho(id: number): void {
-        const confirmado = window.confirm(
-            'Deseja remover este aparelho dos dados de demonstração?'
-        );
-
-        if (!confirmado) return;
-
-        this.aparelhoService.remover(id);
-        this.mensagem.set('Aparelho removido com sucesso.');
     }
 }

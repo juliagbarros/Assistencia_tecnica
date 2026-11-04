@@ -1,14 +1,13 @@
 
-import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-import { ColunaTabela, Tabela } from '../../shared/tabela/tabela';
-
 import {
-    OrdemServico,
-    DadosOrdem,
-    OrdemService
-} from './orderns-service';
+    Component,
+    OnInit,
+    computed,
+    inject,
+    signal
+} from '@angular/core';
+
+import { RouterLink } from '@angular/router';
 
 import {
     LucideClipboardList,
@@ -17,11 +16,21 @@ import {
     LucideCircleCheck
 } from '@lucide/angular';
 
-import { Modal } from '../../shared/modal/modal';
+import {
+    ColunaTabela,
+    RegistroTabela,
+    Tabela
+} from '../../shared/tabela/tabela';
 
 import {
-    FormularioOrdem
-} from './formulario-ordem/formulario-ordem';
+    OrdemServico,
+    DadosOrdem,
+    OrdemService
+} from './orderns-service';
+
+import { Modal } from '../../shared/modal/modal';
+
+import { FormularioOrdem } from './formulario-ordem/formulario-ordem';
 
 @Component({
     selector: 'app-ordens',
@@ -38,14 +47,13 @@ import {
     templateUrl: './ordens.html',
     styleUrl: './ordens.scss'
 })
-export class Ordens {
+export class Ordens implements OnInit {
 
     private readonly ordemService = inject(OrdemService);
 
     readonly ordens = this.ordemService.listar();
 
     readonly modalAberto = signal(false);
-
     readonly ordemSelecionada = signal<OrdemServico | null>(null);
 
     readonly colunas: ColunaTabela[] = [
@@ -57,29 +65,52 @@ export class Ordens {
         { chave: 'status', titulo: 'Status', tipo: 'status' }
     ];
 
+    readonly registros = computed<RegistroTabela[]>(() =>
+        this.ordens().map(ordem => ({
+            id: ordem.id,
+            numero: `OS-${String(ordem.id).padStart(4, '0')}`,
+            cliente: ordem.aparelho?.cliente?.nome ??
+                `Cliente #${ordem.aparelho?.cliente?.id ?? '?'}`,
+            aparelho: [
+                ordem.aparelho?.marca,
+                ordem.aparelho?.modelo
+            ].filter(Boolean).join(' ') || `Aparelho #${ordem.aparelho?.id}`,
+            tecnico: ordem.tecnico?.nome ??
+                `Técnico #${ordem.tecnico?.id}`,
+            abertura: ordem.dataAbertura?.slice(0, 16).replace('T', ' ') ?? '',
+            status: ordem.situacao
+        }))
+    );
+
     readonly totalOrdens = computed(() =>
         this.ordens().length
     );
 
     readonly ordensAbertas = computed(() =>
-        this.ordens().filter(o =>
-            o.status === 'Aberta'
+        this.ordens().filter(ordem =>
+            ordem.situacao === 'ABERTA'
         ).length
     );
 
     readonly ordensEmAtendimento = computed(() =>
-        this.ordens().filter(o =>
-            o.status === 'Em atendimento'
+        this.ordens().filter(ordem =>
+            ordem.situacao === 'EM_ATENDIMENTO' ||
+            ordem.situacao === 'EM_ANDAMENTO'
         ).length
     );
 
     readonly ordensConcluidas = computed(() =>
-        this.ordens().filter(o =>
-            o.status === 'Concluída' || o.status === 'Entregue'
+        this.ordens().filter(ordem =>
+            ordem.situacao === 'CONCLUIDA' ||
+            ordem.situacao === 'ENTREGUE'
         ).length
     );
 
     readonly mensagem = signal('');
+
+    ngOnInit(): void {
+        this.ordemService.carregar();
+    }
 
     adicionarOrdem(): void {
         this.ordemSelecionada.set(null);
@@ -104,43 +135,53 @@ export class Ordens {
         const ordem = this.ordemSelecionada();
 
         if (ordem) {
-            const atualizado = this.ordemService.atualizar(
-                ordem.id,
-                dados
-            );
+            this.ordemService.atualizar(ordem.id, dados).subscribe({
+                next: () => {
+                    this.ordemService.carregar();
+                    this.mensagem.set('Ordem atualizada com sucesso.');
+                    this.fecharModal();
+                },
+                error: (erro) => {
+                    console.error(erro);
+                    this.mensagem.set('Erro ao atualizar ordem.');
+                }
+            });
 
-            if (!atualizado) {
-                this.mensagem.set('Ordem não encontrada.');
-                return;
-            }
-
-            this.mensagem.set('Ordem atualizada com sucesso.');
-        } else {
-            this.ordemService.criar(dados);
-            this.mensagem.set('Ordem cadastrada com sucesso.');
+            return;
         }
 
-        this.fecharModal();
+        this.ordemService.criar(dados).subscribe({
+            next: () => {
+                this.ordemService.carregar();
+                this.mensagem.set('Ordem cadastrada com sucesso.');
+                this.fecharModal();
+            },
+            error: (erro) => {
+                console.error(erro);
+                this.mensagem.set('Erro ao cadastrar ordem.');
+            }
+        });
+    }
+
+    removerOrdem(id: number): void {
+        if (!window.confirm('Deseja remover esta ordem de serviço?')) {
+            return;
+        }
+
+        this.ordemService.remover(id).subscribe({
+            next: () => {
+                this.ordemService.carregar();
+                this.mensagem.set('Ordem removida com sucesso.');
+            },
+            error: (erro) => {
+                console.error(erro);
+                this.mensagem.set('Erro ao remover ordem.');
+            }
+        });
     }
 
     fecharModal(): void {
         this.modalAberto.set(false);
         this.ordemSelecionada.set(null);
-    }
-
-    removerOrdem(id: number): void {
-        const confirmado = window.confirm(
-            'Deseja remover esta ordem dos dados de demonstração?'
-        );
-
-        if (!confirmado) {
-            return;
-        }
-
-        this.ordemService.remover(id);
-
-        this.mensagem.set(
-            'Ordem removida dos dados de demonstração.'
-        );
     }
 }

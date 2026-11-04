@@ -2,18 +2,18 @@
 <section class="pagina-aparelhos">
 
     <nav class="caminho" aria-label="Caminho de navegação">
-        <a routerLink="/painel">Início</a>
+        <span>Início</span>
         <span>›</span>
         <span>Aparelhos</span>
     </nav>
 
     <app-tabela
         titulo="Aparelhos"
-        descricao="Visualize e gerencie os aparelhos cadastrados."
+        descricao="Visualize e gerencie os aparelhos cadastrados na assistência."
         placeholderBusca="Pesquisar cliente, marca ou modelo..."
         textoAdicionar="Adicionar aparelho"
         [colunas]="colunas"
-        [registros]="aparelhos()"
+        [registros]="registros()"
         (adicionar)="adicionarAparelho()"
         (editar)="editarAparelho($event)"
         (remover)="removerAparelho($event)">
@@ -31,22 +31,22 @@
             </div>
 
             <div class="card-indicador">
-                <div class="icone-indicador amarelo">
+                <div class="icone-indicador verde">
                     <svg lucideSmartphone [size]="24"></svg>
                 </div>
                 <div class="dados-indicador">
-                    <h3>{{ emManutencao() }}</h3>
-                    <p>Em manutenção</p>
+                    <h3>{{ totalTipos() }}</h3>
+                    <p>Tipos de aparelho</p>
                 </div>
             </div>
 
             <div class="card-indicador">
-                <div class="icone-indicador verde">
+                <div class="icone-indicador amarelo">
                     <svg lucideLaptop [size]="24"></svg>
                 </div>
                 <div class="dados-indicador">
-                    <h3>{{ aparelhosProntos() }}</h3>
-                    <p>Prontos</p>
+                    <h3>{{ totalMarcas() }}</h3>
+                    <p>Marcas cadastradas</p>
                 </div>
             </div>
 
@@ -55,13 +55,12 @@
                     <svg lucideMonitor [size]="24"></svg>
                 </div>
                 <div class="dados-indicador">
-                    <h3>{{ aparelhosEntregues() }}</h3>
-                    <p>Entregues</p>
+                    <h3>{{ aparelhosComObservacoes() }}</h3>
+                    <p>Com observações</p>
                 </div>
             </div>
 
         </div>
-
     </app-tabela>
 
     @if (modalAberto()) {
@@ -80,9 +79,7 @@
     }
 
     @if (mensagem()) {
-        <p class="mensagem" role="status">
-            {{ mensagem() }}
-        </p>
+        <p class="mensagem" role="status">{{ mensagem() }}</p>
     }
 
 </section>

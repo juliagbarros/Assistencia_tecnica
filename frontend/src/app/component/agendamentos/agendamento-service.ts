@@ -1,31 +1,34 @@
 
-import { Injectable, signal } from '@angular/core';
-import { RegistroTabela } from '../../shared/tabela/tabela';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-export type StatusAgendamento =
-    'Agendado' |
-    'Confirmado' |
-    'Concluído' |
-    'Cancelado';
+export interface ClienteAgendamento {
+    id: number;
+    nome?: string;
+}
 
-export interface Agendamento extends RegistroTabela {
-    cliente: string;
-    aparelho: string;
-    tecnico: string;
-    servico: string;
-    data: string;
-    horario: string;
-    status: StatusAgendamento;
+export interface TecnicoAgendamento {
+    id: number;
+    nome?: string;
+}
+
+export interface Agendamento {
+    id: number;
+    cliente: ClienteAgendamento;
+    tecnico: TecnicoAgendamento;
+    inicio: string;
+    fim: string;
+    motivo: string;
+    situacao: string;
 }
 
 export interface DadosAgendamento {
-    cliente: string;
-    aparelho: string;
-    tecnico: string;
-    servico: string;
-    data: string;
-    horario: string;
-    status: StatusAgendamento;
+    cliente: { id: number };
+    tecnico: { id: number };
+    inicio: string;
+    fim: string;
+    motivo: string;
+    situacao: string;
 }
 
 @Injectable({
@@ -33,83 +36,36 @@ export interface DadosAgendamento {
 })
 export class AgendamentoService {
 
-    private readonly agendamentos = signal<Agendamento[]>([
-        {
-            id: 1,
-            cliente: 'Heitor Santana',
-            aparelho: 'Galaxy S24',
-            tecnico: 'Carlos Martins',
-            servico: 'Troca de tela',
-            data: '2026-10-28',
-            horario: '09:00',
-            status: 'Agendado'
-        },
-        {
-            id: 2,
-            cliente: 'João Paulo Menezes',
-            aparelho: 'Inspiron 15',
-            tecnico: 'Ana Souza',
-            servico: 'Limpeza interna',
-            data: '2026-10-29',
-            horario: '14:00',
-            status: 'Confirmado'
-        },
-        {
-            id: 3,
-            cliente: 'Júlia Gabrielle Barros',
-            aparelho: 'iPad Air',
-            tecnico: 'Bruno Lima',
-            servico: 'Formatação',
-            data: '2026-10-27',
-            horario: '10:30',
-            status: 'Concluído'
-        }
-    ]);
+    private readonly http = inject(HttpClient);
+
+    readonly URL = 'http://localhost:8080/api/agendamentos';
+
+    private readonly agendamentos = signal<Agendamento[]>([]);
 
     listar() {
         return this.agendamentos.asReadonly();
     }
 
-    criar(dados: DadosAgendamento): void {
-        const novoId = Math.max(
-            0,
-            ...this.agendamentos().map(agendamento => agendamento.id)
-        ) + 1;
-
-        const novoAgendamento: Agendamento = {
-            id: novoId,
-            ...dados
-        };
-
-        this.agendamentos.update(agendamentos => [
-            ...agendamentos,
-            novoAgendamento
-        ]);
+    carregar(): void {
+        this.http.get<Agendamento[]>(this.URL).subscribe({
+            next: (dados) => {
+                this.agendamentos.set(dados);
+            },
+            error: (erro) => {
+                console.error('Erro ao buscar agendamentos:', erro);
+            }
+        });
     }
 
-    atualizar(id: number, dados: DadosAgendamento): boolean {
-        const existe = this.agendamentos().some(
-            agendamento => agendamento.id === id
-        );
-
-        if (!existe) {
-            return false;
-        }
-
-        this.agendamentos.update(agendamentos =>
-            agendamentos.map(agendamento =>
-                agendamento.id === id
-                    ? { ...agendamento, ...dados }
-                    : agendamento
-            )
-        );
-
-        return true;
+    criar(dados: DadosAgendamento) {
+        return this.http.post<Agendamento>(this.URL, dados);
     }
 
-    remover(id: number): void {
-        this.agendamentos.update(agendamentos =>
-            agendamentos.filter(agendamento => agendamento.id !== id)
-        );
+    atualizar(id: number, dados: DadosAgendamento) {
+        return this.http.put<void>(`${this.URL}/${id}`, dados);
+    }
+
+    remover(id: number) {
+        return this.http.delete<void>(`${this.URL}/${id}`);
     }
 }

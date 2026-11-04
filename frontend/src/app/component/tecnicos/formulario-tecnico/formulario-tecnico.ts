@@ -1,5 +1,10 @@
 
-import { Component, effect, input, output } from '@angular/core';
+import {
+    Component,
+    effect,
+    input,
+    output
+} from '@angular/core';
 
 import {
     FormControl,
@@ -10,8 +15,7 @@ import {
 
 import {
     Tecnico,
-    DadosTecnico,
-    StatusTecnico
+    DadosTecnico
 } from '../tecnico-service';
 
 @Component({
@@ -30,38 +34,22 @@ export class FormularioTecnico {
     readonly formulario = new FormGroup({
         nome: new FormControl('', {
             nonNullable: true,
-            validators: [
-                Validators.required,
-                Validators.minLength(3)
-            ]
+            validators: [Validators.required]
         }),
-
         telefone: new FormControl('', {
             nonNullable: true,
-            validators: [
-                Validators.required,
-                Validators.pattern(
-                    /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/
-                )
-            ]
+            validators: [Validators.required]
         }),
-
         email: new FormControl('', {
             nonNullable: true,
-            validators: [
-                Validators.required,
-                Validators.email
-            ]
+            validators: [Validators.required, Validators.email]
         }),
-
         especialidade: new FormControl('', {
             nonNullable: true,
             validators: [Validators.required]
         }),
-
-        status: new FormControl<StatusTecnico>('Ativo', {
-            nonNullable: true,
-            validators: [Validators.required]
+        ativo: new FormControl(true, {
+            nonNullable: true
         })
     });
 
@@ -74,7 +62,7 @@ export class FormularioTecnico {
                 telefone: tecnico?.telefone ?? '',
                 email: tecnico?.email ?? '',
                 especialidade: tecnico?.especialidade ?? '',
-                status: tecnico?.status ?? 'Ativo'
+                ativo: tecnico?.ativo ?? true
             });
         });
     }
@@ -85,8 +73,6 @@ export class FormularioTecnico {
             return;
         }
 
-        this.salvar.emit(
-            this.formulario.getRawValue()
-        );
+        this.salvar.emit(this.formulario.getRawValue());
     }
 }

@@ -1,26 +1,29 @@
 
-import { Injectable, signal } from '@angular/core';
-import { RegistroTabela } from '../../shared/tabela/tabela';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-export type StatusAparelho =
-    'Recebido' | 'Em manutenção' | 'Pronto' | 'Entregue';
+export interface ClienteReferencia {
+    id: number;
+    nome?: string;
+}
 
-export interface Aparelho extends RegistroTabela {
-    cliente: string;
+export interface Aparelho {
+    id: number;
+    cliente: ClienteReferencia;
     tipo: string;
     marca: string;
     modelo: string;
-    numeroSerie: string;
-    status: StatusAparelho;
+    numeroSerie: string | null;
+    observacoes: string | null;
 }
 
 export interface DadosAparelho {
-    cliente: string;
+    clienteId: number;
     tipo: string;
     marca: string;
     modelo: string;
-    numeroSerie: string;
-    status: StatusAparelho;
+    numeroSerie: string | null;
+    observacoes: string | null;
 }
 
 @Injectable({
@@ -28,71 +31,37 @@ export interface DadosAparelho {
 })
 export class AparelhoService {
 
-    private readonly aparelhos = signal<Aparelho[]>([
-        {
-            id: 1,
-            cliente: 'Heitor Santana',
-            tipo: 'Celular',
-            marca: 'Samsung',
-            modelo: 'Galaxy S24',
-            numeroSerie: 'ABC123',
-            status: 'Recebido'
-        },
-        {
-            id: 2,
-            cliente: 'João Paulo Menezes',
-            tipo: 'Notebook',
-            marca: 'Dell',
-            modelo: 'Inspiron 15',
-            numeroSerie: 'XYZ456',
-            status: 'Em manutenção'
-        }
-    ]);
+    private readonly http = inject(HttpClient);
+
+    readonly URL = 'http://localhost:8080/api/aparelhos';
+
+    private readonly aparelhos = signal<Aparelho[]>([]);
 
     listar() {
         return this.aparelhos.asReadonly();
     }
 
-    criar(dados: DadosAparelho): void {
-        const novoId = Math.max(
-            0,
-            ...this.aparelhos().map(aparelho => aparelho.id)
-        ) + 1;
-
-        const novoAparelho: Aparelho = {
-            id: novoId,
-            ...dados
-        };
-
-        this.aparelhos.update(aparelhos => [
-            ...aparelhos,
-            novoAparelho
-        ]);
+    carregar(): void {
+        this.http.get<Aparelho[]>(this.URL).subscribe({
+            next: (dados) => {
+                this.aparelhos.set(dados);
+                console.log(dados)
+            },
+            error: (erro) => {
+                console.error('Erro ao buscar aparelhos:', erro);
+            }
+        });
     }
 
-    atualizar(id: number, dados: DadosAparelho): boolean {
-        const existe = this.aparelhos().some(
-            aparelho => aparelho.id === id
-        );
-
-        if (!existe) {
-            return false;
-        }
-
-        this.aparelhos.update(aparelhos =>
-            aparelhos.map(aparelho =>
-                aparelho.id === id
-                    ? { ...aparelho, ...dados }
-                    : aparelho
-            )
-        );
-
-        return true;
+    criar(dados: DadosAparelho) {
+        return this.http.post<Aparelho>(this.URL, dados);
     }
 
-    remover(id: number): void {
-        this.aparelhos.update(aparelhos =>
-            aparelhos.filter(aparelho => aparelho.id !== id)
-        );
+    atualizar(id: number, dados: DadosAparelho) {
+        return this.http.put<void>(`${this.URL}/${id}`, dados);
+    }
+
+    remover(id: number) {
+        return this.http.delete<void>(`${this.URL}/${id}`);
     }
 }

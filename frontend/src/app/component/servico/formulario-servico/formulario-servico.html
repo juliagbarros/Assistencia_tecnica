@@ -23,26 +23,6 @@
 
     </div>
 
-    <div class="campo-formulario">
-
-        <label for="categoria-servico">
-            Categoria <span>*</span>
-        </label>
-
-        <select id="categoria-servico" formControlName="categoria">
-            <option value="">Selecione a categoria</option>
-            <option value="Celular">Celular</option>
-            <option value="Tablet">Tablet</option>
-            <option value="Notebook">Notebook</option>
-            <option value="Computador">Computador</option>
-            <option value="Geral">Geral</option>
-        </select>
-
-        @if (formulario.controls.categoria.invalid && formulario.controls.categoria.touched) {
-            <small class="erro">Selecione uma categoria.</small>
-        }
-
-    </div>
 
     <div class="campo-formulario">
 
@@ -70,31 +50,15 @@
             type="number"
             min="0"
             step="0.01"
-            formControlName="valor">
+            formControlName="precoPadrao">
 
-        @if (formulario.controls.valor.invalid && formulario.controls.valor.touched) {
+        @if (formulario.controls.precoPadrao.invalid && formulario.controls.precoPadrao.touched) {
             <small class="erro">Informe um valor válido.</small>
         }
 
     </div>
 
-    <div class="campo-formulario">
 
-        <label for="tempo-servico">
-            Tempo estimado <span>*</span>
-        </label>
-
-        <input
-            id="tempo-servico"
-            type="text"
-            formControlName="tempoEstimado"
-            placeholder="Ex.: 2 horas">
-
-        @if (formulario.controls.tempoEstimado.invalid && formulario.controls.tempoEstimado.touched) {
-            <small class="erro">Informe o tempo estimado.</small>
-        }
-
-    </div>
 
     <div class="campo-formulario">
 

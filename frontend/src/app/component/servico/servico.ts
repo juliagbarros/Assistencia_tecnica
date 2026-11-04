@@ -42,16 +42,15 @@ export class Servicos {
 
     readonly servicos = this.servicoService.listar();
 
+    
     readonly modalAberto = signal(false);
 
     readonly servicoSelecionado = signal<Servico | null>(null);
 
     readonly colunas: ColunaTabela[] = [
         { chave: 'nome', titulo: 'Serviço' },
-        { chave: 'categoria', titulo: 'Categoria' },
         { chave: 'descricao', titulo: 'Descrição' },
-        { chave: 'valor', titulo: 'Valor (R$)' },
-        { chave: 'tempoEstimado', titulo: 'Tempo estimado' },
+        { chave: 'precoPadrao', titulo: 'Valor (R$)' },
         { chave: 'status', titulo: 'Status', tipo: 'status' }
     ];
 
@@ -71,14 +70,7 @@ export class Servicos {
         ).length
     );
 
-    readonly totalCategorias = computed(() => {
-        const categorias = this.servicos().map(
-            servico => servico.categoria
-        );
-
-        return new Set(categorias).size;
-    });
-
+    
     readonly mensagem = signal('');
 
     adicionarServico(): void {
@@ -109,10 +101,7 @@ export class Servicos {
                 dados
             );
 
-            if (!atualizado) {
-                this.mensagem.set('Serviço não encontrado.');
-                return;
-            }
+           
 
             this.mensagem.set('Serviço atualizado com sucesso.');
         } else {

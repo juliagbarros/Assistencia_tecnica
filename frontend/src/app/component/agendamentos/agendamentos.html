@@ -10,10 +10,10 @@
     <app-tabela
         titulo="Agendamentos"
         descricao="Visualize e gerencie os agendamentos da assistência."
-        placeholderBusca="Pesquisar cliente, técnico ou serviço..."
+        placeholderBusca="Pesquisar cliente, técnico ou motivo..."
         textoAdicionar="Adicionar agendamento"
         [colunas]="colunas"
-        [registros]="agendamentos()"
+        [registros]="registros()"
         (adicionar)="adicionarAgendamento()"
         (editar)="editarAgendamento($event)"
         (remover)="removerAgendamento($event)">
@@ -61,7 +61,6 @@
             </div>
 
         </div>
-
     </app-tabela>
 
     @if (modalAberto()) {
@@ -80,9 +79,7 @@
     }
 
     @if (mensagem()) {
-        <p class="mensagem" role="status">
-            {{ mensagem() }}
-        </p>
+        <p class="mensagem" role="status">{{ mensagem() }}</p>
     }
 
 </section>

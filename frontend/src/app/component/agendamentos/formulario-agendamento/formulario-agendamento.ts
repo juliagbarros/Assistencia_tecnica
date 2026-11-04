@@ -1,5 +1,12 @@
 
-import { Component, effect, input, output } from '@angular/core';
+import {
+    Component,
+    effect,
+    inject,
+    input,
+    output,
+    signal
+} from '@angular/core';
 
 import {
     FormControl,
@@ -10,9 +17,11 @@ import {
 
 import {
     Agendamento,
-    DadosAgendamento,
-    StatusAgendamento
+    DadosAgendamento
 } from '../agendamento-service';
+
+import { ClienteService } from '../../clientes/cliente-service';
+import { TecnicoService } from '../../tecnicos/tecnico-service';
 
 @Component({
     selector: 'app-formulario-agendamento',
@@ -22,70 +31,95 @@ import {
 })
 export class FormularioAgendamento {
 
+    private readonly clienteService = inject(ClienteService);
+    private readonly tecnicoService = inject(TecnicoService);
+
+    readonly clientes = this.clienteService.listar();
+    readonly tecnicos = this.tecnicoService.listar();
+
     agendamento = input<Agendamento | null>(null);
 
     salvar = output<DadosAgendamento>();
     cancelar = output<void>();
 
+    readonly erroIntervalo = signal('');
+
     readonly formulario = new FormGroup({
-        cliente: new FormControl('', {
+        clienteId: new FormControl<number | null>(null, {
+            validators: [Validators.required]
+        }),
+        tecnicoId: new FormControl<number | null>(null, {
+            validators: [Validators.required]
+        }),
+        inicio: new FormControl('', {
             nonNullable: true,
             validators: [Validators.required]
         }),
-
-        aparelho: new FormControl('', {
+        fim: new FormControl('', {
             nonNullable: true,
             validators: [Validators.required]
         }),
-
-        tecnico: new FormControl('', {
+        motivo: new FormControl('', {
             nonNullable: true,
             validators: [Validators.required]
         }),
-
-        servico: new FormControl('', {
-            nonNullable: true,
-            validators: [Validators.required]
-        }),
-
-        data: new FormControl('', {
-            nonNullable: true,
-            validators: [Validators.required]
-        }),
-
-        horario: new FormControl('', {
-            nonNullable: true,
-            validators: [Validators.required]
-        }),
-
-        status: new FormControl<StatusAgendamento>('Agendado', {
+        situacao: new FormControl('', {
             nonNullable: true,
             validators: [Validators.required]
         })
     });
 
     constructor() {
+        this.tecnicoService.carregar();
+
         effect(() => {
             const agendamento = this.agendamento();
 
             this.formulario.reset({
-                cliente: agendamento?.cliente ?? '',
-                aparelho: agendamento?.aparelho ?? '',
-                tecnico: agendamento?.tecnico ?? '',
-                servico: agendamento?.servico ?? '',
-                data: agendamento?.data ?? '',
-                horario: agendamento?.horario ?? '',
-                status: agendamento?.status ?? 'Agendado'
+                clienteId: agendamento?.cliente?.id ?? null,
+                tecnicoId: agendamento?.tecnico?.id ?? null,
+                inicio: agendamento?.inicio?.slice(0, 16) ?? '',
+                fim: agendamento?.fim?.slice(0, 16) ?? '',
+                motivo: agendamento?.motivo ?? '',
+                situacao: agendamento?.situacao ?? ''
             });
+
+            this.erroIntervalo.set('');
         });
     }
 
+    private formatarData(valor: string): string {
+        return valor.length === 16 ? `${valor}:00` : valor;
+    }
+
     enviar(): void {
+        this.erroIntervalo.set('');
+
         if (this.formulario.invalid) {
             this.formulario.markAllAsTouched();
             return;
         }
 
-        this.salvar.emit(this.formulario.getRawValue());
+        const dados = this.formulario.getRawValue();
+
+        if (dados.clienteId === null || dados.tecnicoId === null) {
+            return;
+        }
+
+        if (new Date(dados.fim) <= new Date(dados.inicio)) {
+            this.erroIntervalo.set(
+                'A data de término deve ser posterior à data de início.'
+            );
+            return;
+        }
+
+        this.salvar.emit({
+            cliente: { id: dados.clienteId },
+            tecnico: { id: dados.tecnicoId },
+            inicio: this.formatarData(dados.inicio),
+            fim: this.formatarData(dados.fim),
+            motivo: dados.motivo,
+            situacao: dados.situacao.trim()
+        });
     }
 }

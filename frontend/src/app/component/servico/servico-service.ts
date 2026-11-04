@@ -1,115 +1,109 @@
-
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { RegistroTabela } from '../../shared/tabela/tabela';
 
 export type StatusServico = 'Ativo' | 'Inativo';
 
+interface ServicoApi {
+  id: number;
+  nome: string;
+  descricao: string | null;
+  precoPadrao: number;
+  ativo: boolean;
+}
+
+interface DadosServicoApi {
+  nome: string;
+  descricao: string;
+  precoPadrao: number;
+  ativo: boolean;
+}
+
 export interface Servico extends RegistroTabela {
-    nome: string;
-    categoria: string;
-    descricao: string;
-    valor: number;
-    tempoEstimado: string;
-    status: StatusServico;
+  nome: string;
+  descricao: string;
+  precoPadrao: number;
+  status: StatusServico;
 }
 
 export interface DadosServico {
-    nome: string;
-    categoria: string;
-    descricao: string;
-    valor: number;
-    tempoEstimado: string;
-    status: StatusServico;
+  nome: string;
+  descricao: string;
+  precoPadrao: number;
+  status: StatusServico;
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class ServicoService {
+  private readonly http = inject(HttpClient);
 
-    private readonly servicos = signal<Servico[]>([
-        {
-            id: 1,
-            nome: 'Troca de tela',
-            categoria: 'Celular',
-            descricao: 'Substituição da tela do aparelho',
-            valor: 250,
-            tempoEstimado: '2 horas',
-            status: 'Ativo'
-        },
-        {
-            id: 2,
-            nome: 'Limpeza interna',
-            categoria: 'Computador',
-            descricao: 'Limpeza e manutenção preventiva',
-            valor: 100,
-            tempoEstimado: '1 hora',
-            status: 'Ativo'
-        },
-        {
-            id: 3,
-            nome: 'Formatação',
-            categoria: 'Notebook',
-            descricao: 'Reinstalação do sistema operacional',
-            valor: 150,
-            tempoEstimado: '3 horas',
-            status: 'Ativo'
-        },
-        {
-            id: 4,
-            nome: 'Troca de bateria',
-            categoria: 'Celular',
-            descricao: 'Substituição da bateria',
-            valor: 180,
-            tempoEstimado: '1 hora',
-            status: 'Inativo'
-        }
-    ]);
+  private readonly URL = 'http://localhost:8080/api/servicos';
 
-    listar() {
-        return this.servicos.asReadonly();
-    }
+  private readonly servicos = signal<Servico[]>([]);
 
-    criar(dados: DadosServico): void {
-        const novoId = Math.max(
-            0,
-            ...this.servicos().map(servico => servico.id)
-        ) + 1;
+  listar() {
+    this.http.get<ServicoApi[]>(this.URL).subscribe(res => {
+      this.servicos.set(
+        res.map(servico => this.converterParaTela(servico))
+      );
+    });
 
-        const novoServico: Servico = {
-            id: novoId,
-            ...dados
-        };
+    return this.servicos.asReadonly();
+  }
 
-        this.servicos.update(servicos => [
-            ...servicos,
-            novoServico
-        ]);
-    }
+  criar(dados: DadosServico): void {
+    this.http
+      .post<ServicoApi>(this.URL, this.converterParaApi(dados))
+      .subscribe(res => {
+        const servico = this.converterParaTela(res);
 
-    atualizar(id: number, dados: DadosServico): boolean {
-        const existe = this.servicos().some(
-            servico => servico.id === id
+        this.servicos.update(lista => [...lista, servico]);
+      });
+  }
+
+  atualizar(id: number, dados: DadosServico): void {
+    this.http
+      .put<ServicoApi>(
+        `${this.URL}/${id}`,
+        this.converterParaApi(dados)
+      )
+      .subscribe(res => {
+        const atualizado = this.converterParaTela(res);
+
+        this.servicos.update(lista =>
+          lista.map(servico =>
+            servico.id === id ? atualizado : servico
+          )
         );
+      });
+  }
 
-        if (!existe) {
-            return false;
-        }
+  remover(id: number): void {
+    this.http.delete<void>(`${this.URL}/${id}`).subscribe(() => {
+      this.servicos.update(lista =>
+        lista.filter(servico => servico.id !== id)
+      );
+    });
+  }
 
-        this.servicos.update(servicos =>
-            servicos.map(servico =>
-                servico.id === id
-                    ? { ...servico, ...dados }
-                    : servico
-            )
-        );
+  private converterParaTela(servico: ServicoApi): Servico {
+    return {
+      id: servico.id,
+      nome: servico.nome,
+      descricao: servico.descricao ?? '',
+      precoPadrao: servico.precoPadrao,
+      status: servico.ativo ? 'Ativo' : 'Inativo'
+    };
+  }
 
-        return true;
-    }
-
-    remover(id: number): void {
-        this.servicos.update(servicos =>
-            servicos.filter(servico => servico.id !== id)
-        );
-    }
+  private converterParaApi(dados: DadosServico): DadosServicoApi {
+    return {
+      nome: dados.nome,
+      descricao: dados.descricao,
+      precoPadrao: dados.precoPadrao,
+      ativo: dados.status === 'Ativo'
+    };
+  }
 }

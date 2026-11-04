@@ -13,7 +13,7 @@
         placeholderBusca="Pesquisar número da OS, cliente ou aparelho..."
         textoAdicionar="Adicionar ordem"
         [colunas]="colunas"
-        [registros]="ordens()"
+        [registros]="registros()"
         (adicionar)="adicionarOrdem()"
         (editar)="editarOrdem($event)"
         (remover)="removerOrdem($event)">
@@ -21,63 +21,49 @@
         <div resumo class="indicadores">
 
             <div class="card-indicador">
-
                 <div class="icone-indicador azul">
                     <svg lucideClipboardList [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
                     <h3>{{ totalOrdens() }}</h3>
                     <p>Total de ordens</p>
                 </div>
-
             </div>
 
             <div class="card-indicador">
-
                 <div class="icone-indicador verde">
                     <svg lucideClock3 [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
                     <h3>{{ ordensAbertas() }}</h3>
                     <p>Ordens abertas</p>
                 </div>
-
             </div>
 
             <div class="card-indicador">
-
                 <div class="icone-indicador amarelo">
                     <svg lucideWrench [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
                     <h3>{{ ordensEmAtendimento() }}</h3>
                     <p>Em atendimento</p>
                 </div>
-
             </div>
 
             <div class="card-indicador">
-
                 <div class="icone-indicador roxo">
                     <svg lucideCircleCheck [size]="24"></svg>
                 </div>
-
                 <div class="dados-indicador">
                     <h3>{{ ordensConcluidas() }}</h3>
-                    <p>Ordens concluídas</p>
+                    <p>Concluídas ou entregues</p>
                 </div>
-
             </div>
 
         </div>
-
     </app-tabela>
 
     @if (modalAberto()) {
-
         <app-modal
             [titulo]="ordemSelecionada() ? 'Editar ordem' : 'Cadastrar ordem'"
             [descricao]="ordemSelecionada() ? 'Atualize as informações da ordem de serviço.' : 'Preencha as informações da nova ordem de serviço.'"
@@ -90,13 +76,10 @@
             </app-formulario-ordem>
 
         </app-modal>
-
     }
 
     @if (mensagem()) {
-        <p class="mensagem" role="status">
-            {{ mensagem() }}
-        </p>
+        <p class="mensagem" role="status">{{ mensagem() }}</p>
     }
 
 </section>

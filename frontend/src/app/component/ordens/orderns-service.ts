@@ -1,29 +1,43 @@
 
-import { Injectable, signal } from '@angular/core';
-import { RegistroTabela } from '../../shared/tabela/tabela';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-export type StatusOrdem =
-    'Aberta' |
-    'Em atendimento' |
-    'Concluída' |
-    'Entregue';
-
-export interface OrdemServico extends RegistroTabela {
-    numero: string;
-    cliente: string;
-    aparelho: string;
-    tecnico: string;
-    abertura: string;
-    status: StatusOrdem;
+export interface AparelhoOrdem {
+    id: number;
+    tipo?: string;
+    marca?: string;
+    modelo?: string;
+    cliente?: {
+        id: number;
+        nome?: string;
+    };
 }
 
+export interface TecnicoOrdem {
+    id: number;
+    nome?: string;
+}
+
+export interface OrdemServico {
+    id: number;
+    aparelho: AparelhoOrdem;
+    tecnico: TecnicoOrdem;
+    defeitoRelatado: string;
+    diagnostico: string | null;
+    situacao: string;
+    dataAbertura: string;
+    dataConclusao: string | null;
+    dataEntrega: string | null;
+}
 export interface DadosOrdem {
-    numero: string;
-    cliente: string;
-    aparelho: string;
-    tecnico: string;
-    abertura: string;
-    status: StatusOrdem;
+    aparelhoId: number;
+    tecnicoId: number;
+    defeitoRelatado: string;
+    diagnostico: string | null;
+    situacao: string;
+    dataAbertura: string;
+    dataConclusao: string | null;
+    dataEntrega: string | null;
 }
 
 @Injectable({
@@ -31,80 +45,36 @@ export interface DadosOrdem {
 })
 export class OrdemService {
 
-    private readonly ordens = signal<OrdemServico[]>([
-        {
-            id: 1,
-            numero: 'OS-0001',
-            cliente: 'Heitor Santana',
-            aparelho: 'Galaxy S24',
-            tecnico: 'Carlos Martins',
-            abertura: '2026-10-27',
-            status: 'Aberta'
-        },
-        {
-            id: 2,
-            numero: 'OS-0002',
-            cliente: 'João Paulo Menezes',
-            aparelho: 'Inspiron 15',
-            tecnico: 'Ana Souza',
-            abertura: '2026-10-26',
-            status: 'Em atendimento'
-        },
-        {
-            id: 3,
-            numero: 'OS-0003',
-            cliente: 'Júlia Gabrielle Barros',
-            aparelho: 'iPad Air',
-            tecnico: 'Bruno Lima',
-            abertura: '2026-10-25',
-            status: 'Concluída'
-        }
-    ]);
+    private readonly http = inject(HttpClient);
+
+    readonly URL = 'http://localhost:8080/api/ordens';
+
+    private readonly ordens = signal<OrdemServico[]>([]);
 
     listar() {
         return this.ordens.asReadonly();
     }
 
-    criar(dados: DadosOrdem): void {
-        const novoId = Math.max(
-            0,
-            ...this.ordens().map(ordem => ordem.id)
-        ) + 1;
-
-        const novaOrdem: OrdemServico = {
-            id: novoId,
-            ...dados
-        };
-
-        this.ordens.update(ordens => [
-            ...ordens,
-            novaOrdem
-        ]);
+    carregar(): void {
+        this.http.get<OrdemServico[]>(this.URL).subscribe({
+            next: (dados) => {
+                this.ordens.set(dados);
+            },
+            error: (erro) => {
+                console.error('Erro ao buscar ordens:', erro);
+            }
+        });
     }
 
-    atualizar(id: number, dados: DadosOrdem): boolean {
-        const existe = this.ordens().some(
-            ordem => ordem.id === id
-        );
-
-        if (!existe) {
-            return false;
-        }
-
-        this.ordens.update(ordens =>
-            ordens.map(ordem =>
-                ordem.id === id
-                    ? { ...ordem, ...dados }
-                    : ordem
-            )
-        );
-
-        return true;
+    criar(dados: DadosOrdem) {
+        return this.http.post<OrdemServico>(this.URL, dados);
     }
 
-    remover(id: number): void {
-        this.ordens.update(ordens =>
-            ordens.filter(ordem => ordem.id !== id)
-        );
+    atualizar(id: number, dados: DadosOrdem) {
+        return this.http.put<void>(`${this.URL}/${id}`, dados);
+    }
+
+    remover(id: number) {
+        return this.http.delete<void>(`${this.URL}/${id}`);
     }
 }
