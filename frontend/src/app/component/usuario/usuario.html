@@ -1,0 +1,19 @@
+<section class="pagina-usuario">
+
+    <nav class="caminho" aria-label="Caminho de navegação">
+        <a routerLink="/painel">Início</a>
+        <span>›</span>
+        <span>Usuarios</span>
+    </nav>
+
+    <app-tabela 
+    titulo="Usuarios" 
+    descricao="Visualize e gerencie os usuarios cadastrados no sistema" 
+    [colunas]="colunas" 
+    [registros]="registros" 
+    placeholderBusca="Pesquisar nome, email ou perfil ..."
+    textoAdicionar="Adicionar Usuario"
+    ></app-tabela>
+
+
+</section>
