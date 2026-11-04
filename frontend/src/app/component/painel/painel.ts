@@ -60,7 +60,7 @@ export class Painel implements OnInit {
 
     readonly ordensEmAtendimento = computed(() =>
         this.ordens().filter(ordem => {
-            const situacao = this.normalizarSituacao(ordem.situacao);
+            const situacao = this.normalizarSituacao(ordem.status);
 
             return situacao === 'EM_ATENDIMENTO' ||
                    situacao === 'EM_ANDAMENTO';
@@ -74,7 +74,7 @@ export class Painel implements OnInit {
                 const data = agendamento.inicio?.slice(0, 10);
 
                 const situacao = this.normalizarSituacao(
-                    agendamento.situacao
+                    agendamento.status
                 );
 
                 return data >= this.hojeISO &&
@@ -94,18 +94,18 @@ export class Painel implements OnInit {
             .map(agendamento => ({
                 ...agendamento,
 
-                cliente: agendamento.cliente?.nome ??
-                    `Cliente #${agendamento.cliente?.id}`,
+                cliente: agendamento.clienteNome ??
+                    `Cliente #${agendamento.clienteId}`,
 
-                tecnico: agendamento.tecnico?.nome ??
-                    `Técnico #${agendamento.tecnico?.id}`,
+                tecnico: agendamento.tecnicoNome ??
+                    `Técnico #${agendamento.tecnicoId}`,
 
                 data: agendamento.inicio.slice(0, 10),
 
                 horario: agendamento.inicio.slice(11, 16),
 
                 status: this.formatarSituacao(
-                    agendamento.situacao
+                    agendamento.status
                 )
             }))
     );
@@ -125,22 +125,21 @@ export class Painel implements OnInit {
 
                 numero: `OS-${String(ordem.id).padStart(4, '0')}`,
 
-                cliente: ordem.aparelho?.cliente?.nome ??
-                    `Cliente #${ordem.aparelho?.cliente?.id ?? '?'}`,
+                cliente: ordem.clienteNome ??
+                    `Cliente #${ordem.clienteId ?? '?'}`,
 
                 aparelho: [
-                    ordem.aparelho?.marca,
-                    ordem.aparelho?.modelo
+                    ordem.aparelho
                 ].filter(Boolean).join(' ') ||
-                    `Aparelho #${ordem.aparelho?.id}`,
+                    `Aparelho #${ordem.aparelhoId}`,
 
-                tecnico: ordem.tecnico?.nome ??
-                    `Técnico #${ordem.tecnico?.id}`,
+                tecnico: ordem.tecnicoNome ??
+                    `Técnico #${ordem.tecnicoId}`,
 
                 abertura: this.formatarData(ordem.dataAbertura),
 
                 status: this.formatarSituacao(
-                    ordem.situacao
+                    ordem.status
                 )
             }))
     );
@@ -181,7 +180,7 @@ export class Painel implements OnInit {
 
             const quantidade = ordens.filter(ordem =>
                 situacao.valores.includes(
-                    this.normalizarSituacao(ordem.situacao)
+                    this.normalizarSituacao(ordem.status)
                 )
             ).length;
 

@@ -59,20 +59,20 @@ export class Agendamentos implements OnInit {
         { chave: 'inicio', titulo: 'Início' },
         { chave: 'fim', titulo: 'Fim' },
         { chave: 'motivo', titulo: 'Motivo' },
-        { chave: 'status', titulo: 'Situação', tipo: 'status' }
+        { chave: 'status', titulo: 'Situação' }
     ];
 
     readonly registros = computed<RegistroTabela[]>(() =>
         this.agendamentos().map(agendamento => ({
             id: agendamento.id,
-            cliente: agendamento.cliente?.nome ??
-                `Cliente #${agendamento.cliente?.id}`,
-            tecnico: agendamento.tecnico?.nome ??
-                `Técnico #${agendamento.tecnico?.id}`,
+            cliente: agendamento.clienteNome ??
+                `Cliente #${agendamento.clienteId}`,
+            tecnico: agendamento.tecnicoNome ??
+                `Técnico #${agendamento.tecnicoId}`,
             inicio: agendamento.inicio?.slice(0, 16).replace('T', ' ') ?? '',
             fim: agendamento.fim?.slice(0, 16).replace('T', ' ') ?? '',
             motivo: agendamento.motivo,
-            status: agendamento.situacao
+            status: agendamento.status
         }))
     );
 
@@ -82,19 +82,19 @@ export class Agendamentos implements OnInit {
 
     readonly agendamentosAgendados = computed(() =>
         this.agendamentos().filter(agendamento =>
-            agendamento.situacao === 'AGENDADO'
+            agendamento.status === 'AGENDADO'
         ).length
     );
 
     readonly agendamentosConfirmados = computed(() =>
         this.agendamentos().filter(agendamento =>
-            agendamento.situacao === 'CONFIRMADO'
+            agendamento.status === 'CONFIRMADO'
         ).length
     );
 
     readonly agendamentosConcluidos = computed(() =>
         this.agendamentos().filter(agendamento =>
-            agendamento.situacao === 'CONCLUIDO'
+            agendamento.status === 'CONCLUIDO'
         ).length
     );
 

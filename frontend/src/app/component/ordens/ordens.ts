@@ -69,16 +69,15 @@ export class Ordens implements OnInit {
         this.ordens().map(ordem => ({
             id: ordem.id,
             numero: `OS-${String(ordem.id).padStart(4, '0')}`,
-            cliente: ordem.aparelho?.cliente?.nome ??
-                `Cliente #${ordem.aparelho?.cliente?.id ?? '?'}`,
+            cliente: ordem.clienteNome ??
+                `Cliente #${ordem.clienteId?? '?'}`,
             aparelho: [
-                ordem.aparelho?.marca,
-                ordem.aparelho?.modelo
-            ].filter(Boolean).join(' ') || `Aparelho #${ordem.aparelho?.id}`,
-            tecnico: ordem.tecnico?.nome ??
-                `Técnico #${ordem.tecnico?.id}`,
+                ordem.aparelho
+            ].filter(Boolean).join(' ') || `Aparelho #${ordem.aparelhoId}`,
+            tecnico: ordem.tecnicoNome ??
+                `Técnico #${ordem.tecnicoId}`,
             abertura: ordem.dataAbertura?.slice(0, 16).replace('T', ' ') ?? '',
-            status: ordem.situacao
+            status: ordem.status
         }))
     );
 
@@ -88,21 +87,21 @@ export class Ordens implements OnInit {
 
     readonly ordensAbertas = computed(() =>
         this.ordens().filter(ordem =>
-            ordem.situacao === 'ABERTA'
+            ordem.status === 'ABERTA'
         ).length
     );
 
     readonly ordensEmAtendimento = computed(() =>
         this.ordens().filter(ordem =>
-            ordem.situacao === 'EM_ATENDIMENTO' ||
-            ordem.situacao === 'EM_ANDAMENTO'
+            ordem.status === 'EM_ATENDIMENTO' ||
+            ordem.status === 'EM_ANDAMENTO'
         ).length
     );
 
     readonly ordensConcluidas = computed(() =>
         this.ordens().filter(ordem =>
-            ordem.situacao === 'CONCLUIDA' ||
-            ordem.situacao === 'ENTREGUE'
+            ordem.status === 'CONCLUIDA' ||
+            ordem.status === 'ENTREGUE'
         ).length
     );
 

@@ -55,14 +55,6 @@ export class FormularioOrdem {
         diagnostico: new FormControl('', {
             nonNullable: true
         }),
-        situacao: new FormControl('', {
-            nonNullable: true,
-            validators: [Validators.required]
-        }),
-        dataAbertura: new FormControl('', {
-            nonNullable: true,
-            validators: [Validators.required]
-        }),
         dataConclusao: new FormControl('', {
             nonNullable: true
         }),
@@ -79,12 +71,10 @@ export class FormularioOrdem {
             const ordem = this.ordem();
 
             this.formulario.reset({
-                aparelhoId: ordem?.aparelho?.id ?? null,
-                tecnicoId: ordem?.tecnico?.id ?? null,
+                aparelhoId: ordem?.aparelhoId ?? null,
+                tecnicoId: ordem?.tecnicoId ?? null,
                 defeitoRelatado: ordem?.defeitoRelatado ?? '',
                 diagnostico: ordem?.diagnostico ?? '',
-                situacao: ordem?.situacao ?? '',
-                dataAbertura: ordem?.dataAbertura?.slice(0, 16) ?? '',
                 dataConclusao: ordem?.dataConclusao?.slice(0, 16) ?? '',
                 dataEntrega: ordem?.dataEntrega?.slice(0, 16) ?? ''
             });
@@ -111,19 +101,13 @@ export class FormularioOrdem {
             return;
         }
 
-        const dataAbertura = this.formatarData(dados.dataAbertura);
 
-        if (!dataAbertura) {
-            return;
-        }
 
     this.salvar.emit({
         aparelhoId: dados.aparelhoId,
         tecnicoId: dados.tecnicoId,
         defeitoRelatado: dados.defeitoRelatado,
         diagnostico: dados.diagnostico || null,
-        situacao: dados.situacao.trim(),
-        dataAbertura,
         dataConclusao: this.formatarData(dados.dataConclusao),
         dataEntrega: this.formatarData(dados.dataEntrega)
     });

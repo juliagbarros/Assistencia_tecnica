@@ -76,12 +76,12 @@ export class FormularioAgendamento {
             const agendamento = this.agendamento();
 
             this.formulario.reset({
-                clienteId: agendamento?.cliente?.id ?? null,
-                tecnicoId: agendamento?.tecnico?.id ?? null,
+                clienteId: agendamento?.clienteId ?? null,
+                tecnicoId: agendamento?.tecnicoId ?? null,
                 inicio: agendamento?.inicio?.slice(0, 16) ?? '',
                 fim: agendamento?.fim?.slice(0, 16) ?? '',
                 motivo: agendamento?.motivo ?? '',
-                situacao: agendamento?.situacao ?? ''
+                situacao: agendamento?.status ?? ''
             });
 
             this.erroIntervalo.set('');
@@ -114,8 +114,8 @@ export class FormularioAgendamento {
         }
 
         this.salvar.emit({
-            cliente: { id: dados.clienteId },
-            tecnico: { id: dados.tecnicoId },
+            clienteId:  dados.clienteId ,
+            tecnicoId:  dados.tecnicoId ,
             inicio: this.formatarData(dados.inicio),
             fim: this.formatarData(dados.fim),
             motivo: dados.motivo,

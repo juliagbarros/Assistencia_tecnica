@@ -40,10 +40,7 @@ export class FormularioTecnico {
             nonNullable: true,
             validators: [Validators.required]
         }),
-        email: new FormControl('', {
-            nonNullable: true,
-            validators: [Validators.required, Validators.email]
-        }),
+        
         especialidade: new FormControl('', {
             nonNullable: true,
             validators: [Validators.required]
@@ -60,7 +57,6 @@ export class FormularioTecnico {
             this.formulario.reset({
                 nome: tecnico?.nome ?? '',
                 telefone: tecnico?.telefone ?? '',
-                email: tecnico?.email ?? '',
                 especialidade: tecnico?.especialidade ?? '',
                 ativo: tecnico?.ativo ?? true
             });

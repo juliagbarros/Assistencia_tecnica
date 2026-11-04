@@ -65,31 +65,6 @@
             placeholder="Diagnóstico realizado pelo técnico"></textarea>
     </div>
 
-    <div class="campo-formulario">
-        <label for="situacao-ordem">Situação <span>*</span></label>
-
-        <input
-            id="situacao-ordem"
-            formControlName="situacao"
-            placeholder="Valor exato do enum SituacaoOrdem">
-
-        @if (formulario.controls.situacao.invalid && formulario.controls.situacao.touched) {
-            <small class="erro">Informe a situação da ordem.</small>
-        }
-    </div>
-
-    <div class="campo-formulario">
-        <label for="abertura-ordem">Data de abertura <span>*</span></label>
-
-        <input
-            id="abertura-ordem"
-            type="datetime-local"
-            formControlName="dataAbertura">
-
-        @if (formulario.controls.dataAbertura.invalid && formulario.controls.dataAbertura.touched) {
-            <small class="erro">Informe a data de abertura.</small>
-        }
-    </div>
 
     <div class="campo-formulario">
         <label for="conclusao-ordem">Data de conclusão</label>

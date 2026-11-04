@@ -59,7 +59,6 @@ export class Tecnicos implements OnInit {
     readonly colunas: ColunaTabela[] = [
         { chave: 'nome', titulo: 'Nome' },
         { chave: 'telefone', titulo: 'Telefone' },
-        { chave: 'email', titulo: 'E-mail' },
         { chave: 'especialidade', titulo: 'Especialidade' },
         { chave: 'status', titulo: 'Status', tipo: 'status' }
     ];
@@ -69,7 +68,6 @@ export class Tecnicos implements OnInit {
             id: tecnico.id,
             nome: tecnico.nome,
             telefone: tecnico.telefone,
-            email: tecnico.email,
             especialidade: tecnico.especialidade,
             status: tecnico.ativo ? 'Ativo' : 'Inativo'
         }))

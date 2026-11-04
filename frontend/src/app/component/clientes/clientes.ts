@@ -44,7 +44,6 @@ export class Clientes {
         { chave: 'nome', titulo: 'Nome' },
         { chave: 'telefone', titulo: 'Telefone' },
         { chave: 'email', titulo: 'E-mail' },
-        { chave: 'status', titulo: 'Status', tipo: 'status' }
     ];
 
     readonly registros = computed<RegistroTabela[]>(() => {

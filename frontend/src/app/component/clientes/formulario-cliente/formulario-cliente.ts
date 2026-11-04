@@ -75,7 +75,6 @@ export class FormularioCliente {
                 nome: cliente?.nome ?? '',
                 telefone: cliente?.telefone ?? '',
                 email: cliente?.email ?? '',
-                status: cliente?.status ?? 'Ativo'
             });
         });
     }

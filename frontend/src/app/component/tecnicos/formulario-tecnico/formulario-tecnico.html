@@ -29,18 +29,6 @@
         }
     </div>
 
-    <div class="campo-formulario">
-        <label for="email-tecnico">E-mail <span>*</span></label>
-        <input
-            id="email-tecnico"
-            type="email"
-            formControlName="email"
-            placeholder="email@exemplo.com">
-
-        @if (formulario.controls.email.invalid && formulario.controls.email.touched) {
-            <small class="erro">Informe um e-mail válido.</small>
-        }
-    </div>
 
     <div class="campo-formulario">
         <label for="especialidade-tecnico">Especialidade <span>*</span></label>

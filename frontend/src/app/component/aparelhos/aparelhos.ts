@@ -60,8 +60,8 @@ export class Aparelhos implements OnInit {
 
     readonly registros = computed<RegistroTabela[]>(() =>
         this.aparelhos().map(aparelho => ({
-            id: aparelho.id,
-            cliente: aparelho.cliente?.nome ?? `Cliente #${aparelho.cliente?.id}`,
+            id: aparelho.clienteId,
+            cliente: aparelho.clienteNome ?? `Cliente #${aparelho.clienteId}`,
             tipo: aparelho.tipo,
             marca: aparelho.marca,
             modelo: aparelho.modelo,

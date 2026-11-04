@@ -14,17 +14,19 @@ export interface TecnicoAgendamento {
 
 export interface Agendamento {
     id: number;
-    cliente: ClienteAgendamento;
-    tecnico: TecnicoAgendamento;
+    clienteId:number
+    clienteNome: string;
+    tecnicoId:number
+    tecnicoNome: string;
     inicio: string;
     fim: string;
     motivo: string;
-    situacao: string;
+    status: string;
 }
 
 export interface DadosAgendamento {
-    cliente: { id: number };
-    tecnico: { id: number };
+    clienteId:number;
+    tecnicoId:number;
     inicio: string;
     fim: string;
     motivo: string;
@@ -50,6 +52,7 @@ export class AgendamentoService {
         this.http.get<Agendamento[]>(this.URL).subscribe({
             next: (dados) => {
                 this.agendamentos.set(dados);
+               
             },
             error: (erro) => {
                 console.error('Erro ao buscar agendamentos:', erro);

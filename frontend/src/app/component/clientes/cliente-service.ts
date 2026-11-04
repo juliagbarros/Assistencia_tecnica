@@ -40,7 +40,7 @@ export class ClienteService {
             {
                 this.clientes.set(res)
                 console.log(res)
-                console.log(this.clientes)
+                console.log(this.clientes())
             },
             error:(erro)=>{
                 console.log(erro)

@@ -20,11 +20,15 @@ export interface TecnicoOrdem {
 
 export interface OrdemServico {
     id: number;
-    aparelho: AparelhoOrdem;
-    tecnico: TecnicoOrdem;
+    aparelhoId:number;
+    aparelho: string;
+    tecnicoId:number
+    tecnicoNome: string;
+    clienteId:number;
+    clienteNome:string
     defeitoRelatado: string;
     diagnostico: string | null;
-    situacao: string;
+    status: string;
     dataAbertura: string;
     dataConclusao: string | null;
     dataEntrega: string | null;
@@ -34,8 +38,6 @@ export interface DadosOrdem {
     tecnicoId: number;
     defeitoRelatado: string;
     diagnostico: string | null;
-    situacao: string;
-    dataAbertura: string;
     dataConclusao: string | null;
     dataEntrega: string | null;
 }

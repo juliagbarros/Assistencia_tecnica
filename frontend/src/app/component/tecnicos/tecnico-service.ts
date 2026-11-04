@@ -14,7 +14,6 @@ export interface Tecnico {
 export interface DadosTecnico {
     nome: string;
     telefone: string;
-    email: string;
     especialidade: string;
     ativo: boolean;
 }

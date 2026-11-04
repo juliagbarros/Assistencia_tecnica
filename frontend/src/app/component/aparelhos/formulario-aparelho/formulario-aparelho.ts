@@ -65,7 +65,7 @@ export class FormularioAparelho {
             const aparelho = this.aparelho();
 
             this.formulario.reset({
-                clienteId: aparelho?.cliente?.id ?? null,
+                clienteId: aparelho?.clienteId ?? null,
                 tipo: aparelho?.tipo ?? '',
                 marca: aparelho?.marca ?? '',
                 modelo: aparelho?.modelo ?? '',

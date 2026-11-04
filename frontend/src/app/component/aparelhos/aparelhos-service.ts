@@ -8,8 +8,9 @@ export interface ClienteReferencia {
 }
 
 export interface Aparelho {
-    id: number;
-    cliente: ClienteReferencia;
+    id: number
+    clienteId: number;
+    clienteNome: string;
     tipo: string;
     marca: string;
     modelo: string;
