@@ -94,10 +94,14 @@
     <div class="campo-formulario">
         <label for="situacao-agendamento">Situação <span>*</span></label>
 
-        <input
+        <select
             id="situacao-agendamento"
             formControlName="situacao"
             placeholder="Valor exato do enum SituacaoAgendamento">
+            @for (item of enumAgendamento; track $index) {
+                <option value="{{item}}">{{item}}</option>
+            }    
+        </select>
 
         @if (formulario.controls.situacao.invalid && formulario.controls.situacao.touched) {
             <small class="erro">Informe a situação.</small>

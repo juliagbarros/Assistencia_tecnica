@@ -2,6 +2,13 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+export enum SituacaoAgendamento {
+  Agendado = 'Agendado',
+    Realizado = 'Realizado',
+    Cancelado = 'Cancelado'
+}
+
+
 export interface ClienteAgendamento {
     id: number;
     nome?: string;

@@ -22,6 +22,7 @@ import {
 
 import { ClienteService } from '../../clientes/cliente-service';
 import { TecnicoService } from '../../tecnicos/tecnico-service';
+import { SituacaoAgendamento } from '../agendamento-service';
 
 @Component({
     selector: 'app-formulario-agendamento',
@@ -36,6 +37,8 @@ export class FormularioAgendamento {
 
     readonly clientes = this.clienteService.listar();
     readonly tecnicos = this.tecnicoService.listar();
+
+    readonly enumAgendamento = Object.values(SituacaoAgendamento);
 
     agendamento = input<Agendamento | null>(null);
 
