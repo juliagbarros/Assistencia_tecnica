@@ -4,10 +4,9 @@ import com.assistencia.backend.dto.OrdemRequest;
 import com.assistencia.backend.dto.OrdemUpdateRequest;
 import com.assistencia.backend.exception.BusinessException;
 import com.assistencia.backend.exception.ResourceNotFindException;
-import com.assistencia.backend.model.Aparelho;
-import com.assistencia.backend.model.OrdemServico;
-import com.assistencia.backend.model.SituacaoOrdem;
-import com.assistencia.backend.model.Tecnico;
+import com.assistencia.backend.messaging.event.OrdemConcluidaEvent;
+import com.assistencia.backend.messaging.producer.OrdemConcluidaEventProducer;
+import com.assistencia.backend.model.*;
 import com.assistencia.backend.repository.AparelhoRepository;
 import com.assistencia.backend.repository.ItemOrdemRepository;
 import com.assistencia.backend.repository.OrdemServicoRepository;
@@ -27,6 +26,7 @@ public class OrdemServicoService {
     private final AparelhoRepository aparelhoRepository;
     private final TecnicoRepository tecnicoRepository;
     private final ItemOrdemRepository itemRepository;
+    private final OrdemConcluidaEventProducer producer;
 
     @Transactional
     public OrdemServico abrir(OrdemRequest dados) {
@@ -93,7 +93,15 @@ public class OrdemServicoService {
         ordem.setSituacao(destino);
         if (destino == SituacaoOrdem.Concluida) {
             ordem.setDataConclusao(LocalDateTime.now());
+            Cliente cliente = ordem.getAparelho().getCliente();
+            producer.publicarConclusao(new OrdemConcluidaEvent(
+                    ordem.getId(),
+                    cliente.getNome(),
+                    cliente.getEmail(),
+                    ordem.getAparelho().getTipo(),
+                    ordem.getDataConclusao()));
         }
+
         if (destino == SituacaoOrdem.Entregue) {
             ordem.setDataEntrega(LocalDateTime.now());
         }
