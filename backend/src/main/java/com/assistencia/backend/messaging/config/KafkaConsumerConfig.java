@@ -1,6 +1,6 @@
 package com.assistencia.backend.messaging.config;
 
-import com.assistencia.backend.messaging.event.OrdemConcluidaEvent;
+import com.assistencia.backend.messaging.event.OrdemSituacaoAlteradaEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,17 +22,17 @@ public class KafkaConsumerConfig {
     private String bootstrapServers;
 
     @Bean
-    public ConsumerFactory<String, OrdemConcluidaEvent> consumerFactory() {
+    public ConsumerFactory<String, OrdemSituacaoAlteradaEvent> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "notificador");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JacksonJsonDeserializer<>(OrdemConcluidaEvent.class));
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JacksonJsonDeserializer<>(OrdemSituacaoAlteradaEvent.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrdemConcluidaEvent> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, OrdemConcluidaEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, OrdemSituacaoAlteradaEvent> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OrdemSituacaoAlteradaEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
