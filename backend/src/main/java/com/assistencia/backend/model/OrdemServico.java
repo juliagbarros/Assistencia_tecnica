@@ -40,7 +40,4 @@ public class OrdemServico {
 
     @Column(name = "data_conclusao")
     private LocalDateTime dataConclusao;
-
-    @Column(name = "data_entrega")
-    private LocalDateTime dataEntrega;
 }
