@@ -66,8 +66,10 @@ public class ItemOrdemService {
 
     private void validarAlteracao(OrdemServico ordem) {
         SituacaoOrdem status = ordem.getSituacao();
-        if (status != SituacaoOrdem.Aberta && status != SituacaoOrdem.Em_analise) {
-            throw new BusinessException("Os itens só podem ser alterados com a ordem em Aberta ou Em_analise. " + "Para revisar o orçamento, volte a ordem para Em_analise");
+        if (status != SituacaoOrdem.Aberta) {
+            throw new BusinessException(
+                    "Os itens só podem ser alterados enquanto a ordem estiver Aberta"
+            );
         }
     }
 

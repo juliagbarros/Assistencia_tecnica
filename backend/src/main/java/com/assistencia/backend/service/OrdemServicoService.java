@@ -83,15 +83,6 @@ public class OrdemServicoService {
             throw new BusinessException("Transição inválida: de " + atual + " para " + destino);
         }
 
-        if (destino == SituacaoOrdem.Aguardando_aprovacao) {
-            if (ordem.getDiagnostico() == null || ordem.getDiagnostico().isBlank()) {
-                throw new BusinessException("Coloque o diagnóstico do produto antes");
-            }
-            if (!itemRepository.existsByOrdemId(ordem.getId())) {
-                throw new BusinessException("Adicione pelo menos um item antes de solicitar a aprovação");
-            }
-        }
-
         ordem.setSituacao(destino);
         if (destino == SituacaoOrdem.Concluida) {
             ordem.setDataConclusao(LocalDateTime.now());
@@ -125,23 +116,21 @@ public class OrdemServicoService {
         }
         return tecnico;
     }
+
     private boolean irPara(SituacaoOrdem atual, SituacaoOrdem destino) {
         if (atual == SituacaoOrdem.Aberta) {
-            return destino == SituacaoOrdem.Em_analise || destino == SituacaoOrdem.Cancelada;
-        } else if (atual == SituacaoOrdem.Em_analise) {
-            return destino == SituacaoOrdem.Aguardando_aprovacao || destino == SituacaoOrdem.Cancelada;
-        } else if (atual == SituacaoOrdem.Aguardando_aprovacao) {
-            return destino == SituacaoOrdem.Em_execucao || destino == SituacaoOrdem.Em_analise || destino == SituacaoOrdem.Cancelada;
+            return destino == SituacaoOrdem.Em_execucao ||
+                    destino == SituacaoOrdem.Cancelada;
         } else if (atual == SituacaoOrdem.Em_execucao) {
-            return destino == SituacaoOrdem.Concluida;
-        } else if (atual == SituacaoOrdem.Concluida) {
-            return destino == SituacaoOrdem.Entregue;
+            return destino == SituacaoOrdem.Concluida ||
+                    destino == SituacaoOrdem.Cancelada;
         } else {
             return false;
         }
     }
+
     private boolean encerrada(SituacaoOrdem situacao) {
-        return situacao == SituacaoOrdem.Entregue || situacao == SituacaoOrdem.Cancelada;
+        return situacao == SituacaoOrdem.Concluida || situacao == SituacaoOrdem.Cancelada;
     }
 
     private void publicarEventoSituacao(OrdemServico ordem, SituacaoOrdem anterior) {

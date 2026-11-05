@@ -20,7 +20,6 @@ public class OrdemResponse {
     private final SituacaoOrdem status;
     private final LocalDateTime dataAbertura;
     private final LocalDateTime dataConclusao;
-    private final LocalDateTime dataEntrega;
     private final BigDecimal total;
 
     public OrdemResponse (OrdemServico ordem, BigDecimal total){
@@ -36,7 +35,6 @@ public class OrdemResponse {
         this.status = ordem.getSituacao();
         this.dataAbertura = ordem.getDataAbertura();
         this.dataConclusao = ordem.getDataConclusao();
-        this.dataEntrega = ordem.getDataEntrega();
         this.total = total;
     }
 }
