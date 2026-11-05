@@ -76,7 +76,6 @@ export class FormularioOrdem {
                 defeitoRelatado: ordem?.defeitoRelatado ?? '',
                 diagnostico: ordem?.diagnostico ?? '',
                 dataConclusao: ordem?.dataConclusao?.slice(0, 16) ?? '',
-                dataEntrega: ordem?.dataEntrega?.slice(0, 16) ?? ''
             });
         });
     }

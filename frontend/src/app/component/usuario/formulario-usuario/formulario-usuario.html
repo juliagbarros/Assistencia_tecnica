@@ -1,1 +1,116 @@
-<p>formulario-usuario works!</p>
+
+<form
+    class="formulario-usuario"
+    [formGroup]="formulario"
+    (ngSubmit)="enviar()"
+    novalidate>
+
+    <div class="campo-formulario">
+        <label for="nome-usuario">Nome completo *</label>
+
+        <input
+            id="nome-usuario"
+            type="text"
+            formControlName="nome"
+            placeholder="Nome do usuário">
+
+        @if (formulario.controls.nome.invalid && formulario.controls.nome.touched) {
+            <small class="erro">Informe o nome do usuário.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="email-usuario">E-mail *</label>
+
+        <input
+            id="email-usuario"
+            type="email"
+            formControlName="email"
+            placeholder="usuario@exemplo.com">
+
+        @if (formulario.controls.email.invalid && formulario.controls.email.touched) {
+            <small class="erro">Informe um e-mail válido.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="perfil-usuario">Perfil de acesso *</label>
+
+        <select id="perfil-usuario" formControlName="perfil">
+            <option [ngValue]="null">Selecione o perfil</option>
+            <option value="Admin">Administrador</option>
+            <option value="Tecnico">Técnico</option>
+        </select>
+
+        @if (formulario.controls.perfil.invalid && formulario.controls.perfil.touched) {
+            <small class="erro">Selecione o perfil do usuário.</small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="senha-usuario">
+            {{ usuario() ? 'Nova senha *' : 'Senha *' }}
+        </label>
+
+        <div class="campo-senha">
+            <input
+                id="senha-usuario"
+                [type]="mostrarSenha() ? 'text' : 'password'"
+                formControlName="senha"
+                placeholder="Mínimo de 8 caracteres"
+                autocomplete="new-password">
+
+            <button
+                type="button"
+                class="btn-mostrar-senha"
+                (click)="mostrarSenha.set(!mostrarSenha())">
+                {{ mostrarSenha() ? 'Ocultar' : 'Mostrar' }}
+            </button>
+        </div>
+
+        @if (formulario.controls.senha.invalid && formulario.controls.senha.touched) {
+            <small class="erro">Informe uma senha com pelo menos 8 caracteres.</small>
+        }
+
+        @if (usuario()) {
+            <small class="ajuda">
+                A edição exige uma nova senha conforme o DTO atual.
+            </small>
+        }
+    </div>
+
+    <div class="campo-formulario">
+        <label for="confirmar-senha-usuario">Confirmar senha *</label>
+
+        <input
+            id="confirmar-senha-usuario"
+            type="password"
+            formControlName="confirmarSenha"
+            placeholder="Digite a senha novamente"
+            autocomplete="new-password">
+
+        @if (formulario.controls.confirmarSenha.invalid && formulario.controls.confirmarSenha.touched) {
+            <small class="erro">Confirme sua senha.</small>
+        }
+
+        @if (senhasDiferentes()) {
+            <small class="erro">As senhas informadas não coincidem.</small>
+        }
+    </div>
+
+    <div class="acoes-formulario">
+        <button
+            type="button"
+            class="btn-cancelar"
+            (click)="cancelar.emit()">
+            Cancelar
+        </button>
+
+        <button
+            type="submit"
+            class="btn-salvar">
+            {{ usuario() ? 'Salvar alterações' : 'Cadastrar usuário' }}
+        </button>
+    </div>
+
+</form>

@@ -50,6 +50,13 @@ export interface DadosOrdem {
     dataEntrega: string | null;
 }
 
+export interface OrdemUpdateRequest {
+    tecnicoId: number;
+    defeitoRelatado: string;
+    diagnostico: string | null;
+    situacao: SituacaoOrdem;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -89,8 +96,8 @@ export class OrdemService {
 
     
 alterarStatus(id: number, status: SituacaoOrdem) {
-    return this.http.patch<void>(
-        `${this.URL}/${id}/status`,
+    return this.http.patch<OrdemServico>(
+        `${this.URL}/${id}/situacao`,
         { status }
     );
 }

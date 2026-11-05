@@ -1,48 +1,63 @@
-import { HttpClient } from "@angular/common/http";
-import { inject } from "@angular/core";
 
-export enum perfil{
-    Admin = 'Admin', 
-    Tecnico = 'Tecnico'
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+export type Perfil = 'Admin' | 'Tecnico';
+
+export interface Usuario {
+    id: number;
+    nome: string;
+    email: string;
+    perfil: Perfil;
 }
 
-export interface usuario{
-    id:number,
-    nome:string,
-    email:string,
-    perfil:string
+export interface DadosUsuario {
+    nome: string;
+    email: string;
+    senha: string;
+    perfil: Perfil;
 }
 
-
-export interface dadosUsuario{
-    nome:string,
-    senha:string,
-    email:string,
-    perfil:string
-}
-
-
-export class UsuarioService{
+@Injectable({
+    providedIn: 'root'
+})
+export class UsuarioService {
 
     private readonly http = inject(HttpClient);
 
-    readonly URL = 'http://localhost:8080/api/usuarios';
+    private readonly URL = 'http://localhost:8080/api/usuarios';
 
+    private readonly usuarios = signal<Usuario[]>([]);
 
-    carregar(){
-      return  this.http.get<usuario[]>(this.URL);
+    listar() {
+        return this.usuarios.asReadonly();
     }
 
-    criar(dados:dadosUsuario){
-       return this.http.post<usuario>(this.URL,dados);
+    carregar(): void {
+        this.http.get<Usuario[]>(this.URL).subscribe({
+            next: (dados) => {
+                this.usuarios.set(dados);
+            },
+            error: (erro) => {
+                console.error('Erro ao buscar usuários:', erro);
+            }
+        });
     }
 
-    atualizar(id:number,dados:dadosUsuario){
-        return this.http.put<void>(this.URL+'/'+id,dados)
+    criar(dados: DadosUsuario) {
+        return this.http.post<Usuario>(this.URL, dados);
     }
 
-    deletar(id:number){
-        return this.http.delete<void>(this.URL+'/'+id)
+    atualizar(id: number, dados: DadosUsuario) {
+        return this.http.put<Usuario>(
+            `${this.URL}/${id}`,
+            dados
+        );
     }
 
+    remover(id: number) {
+        return this.http.delete<void>(
+            `${this.URL}/${id}`
+        );
+    }
 }

@@ -9,7 +9,7 @@ import { Aparelhos } from './component/aparelhos/aparelhos';
 import { Tecnicos } from './component/tecnicos/tecnicos';
 import { Agendamentos } from './component/agendamentos/agendamentos';
 import { Painel } from './component/painel/painel';
-import { Usuario } from './component/usuario/usuario';
+import {  Usuarios } from './component/usuario/usuario';
 
 export const routes: Routes = [
     {
@@ -55,7 +55,7 @@ export const routes: Routes = [
             },
             {
                 path: 'usuarios',
-                component:Usuario
+                component:Usuarios
             },
            {
                 path: 'ordens/:id',

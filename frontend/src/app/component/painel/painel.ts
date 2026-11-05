@@ -62,8 +62,8 @@ export class Painel implements OnInit {
         this.ordens().filter(ordem => {
             const situacao = this.normalizarSituacao(ordem.status);
 
-            return situacao === 'EM_ATENDIMENTO' ||
-                   situacao === 'EM_ANDAMENTO';
+            return situacao === 'EM_EXECUCAO' 
+                   
         }).length
     );
 
@@ -217,11 +217,6 @@ export class Painel implements OnInit {
         const nomes: Record<string, string> = {
             ABERTA: 'Aberta',
             EM_ATENDIMENTO: 'Em atendimento',
-            EM_ANDAMENTO: 'Em andamento',
-            CONCLUIDA: 'Concluída',
-            ENTREGUE: 'Entregue',
-            AGENDADO: 'Agendado',
-            CONFIRMADO: 'Confirmado',
             CONCLUIDO: 'Concluído',
             CANCELADO: 'Cancelado'
         };

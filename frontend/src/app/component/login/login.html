@@ -89,16 +89,18 @@
 
         </div>
 
-        <form >
-
+        <form #form="ngForm" (ngSubmit)="entrar(form)">
             <input
-                type="text"
-                placeholder="Login"
-                name="login"
-                id="login"
-                aria-label="Login"
+                type="email"
+                placeholder="E-mail"
+                name="email"
+                id="email"
+                aria-label="E-mail"
                 autocomplete="username"
+                [(ngModel)]="email"
+                [disabled]="carregando()"
                 required
+                email
             >
 
             <input
@@ -108,17 +110,18 @@
                 id="senha"
                 aria-label="Senha"
                 autocomplete="current-password"
+                [(ngModel)]="senha"
+                [disabled]="carregando()"
                 required
             >
 
-            <button routerLink="/clientes">
-                Entrar
+            <button type="submit" [disabled]="carregando()">
+                {{ carregando() ? 'Entrando...' : 'Entrar' }}
             </button>
 
             <p class="mensagem" aria-live="polite">
-                {{ mensagem }}
+                {{ mensagem() }}
             </p>
-
         </form>
 
         <p class="rodape-login">

@@ -337,15 +337,7 @@ export class DetalhesOrdem implements OnInit {
     }
 
    private alterarStatus(status: SituacaoOrdem): void {
-
     if (this.processandoStatus()) {
-        return;
-    }
-
-    const ordem = this.ordem();
-
-    if (!ordem) {
-        this.erro.set('Ordem de serviço não encontrada.');
         return;
     }
 
@@ -353,32 +345,26 @@ export class DetalhesOrdem implements OnInit {
     this.erro.set('');
     this.mensagem.set('');
 
-    this.ordemService.atualizar(ordem.id, {
-        aparelhoId: ordem.aparelhoId,
-        tecnicoId: ordem.tecnicoId,
-        defeitoRelatado: ordem.defeitoRelatado,
-        diagnostico: ordem.diagnostico,
-        dataConclusao: ordem.dataConclusao,
-        dataEntrega: ordem.dataEntrega,
-        status: status
-    }).subscribe({
-        next: () => {
-            this.processandoStatus.set(false);
-            this.ordemService.carregar();
+    this.ordemService.alterarStatus(this.ordemId, status)
+        .subscribe({
+            next: () => {
+                this.ordemService.carregar();
 
-            this.mensagem.set(
-                `Situação alterada para ${this.formatarStatus(status)}.`
-            );
-        },
-        error: (erro) => {
-            console.error(erro);
+                this.mensagem.set(
+                    `Situação alterada para ${this.formatarStatus(status)}.`
+                );
 
-            this.processandoStatus.set(false);
+                this.processandoStatus.set(false);
+            },
+            error: (erro) => {
+                console.error(erro);
 
-            this.erro.set(
-                'Erro ao alterar a situação da ordem.'
-            );
-        }
-    });
+                this.erro.set(
+                    'Erro ao alterar a situação da ordem.'
+                );
+
+                this.processandoStatus.set(false);
+            }
+        });
 }
 }

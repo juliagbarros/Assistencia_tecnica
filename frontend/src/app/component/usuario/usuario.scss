@@ -1,0 +1,125 @@
+
+:host {
+    display: block;
+    width: 100%;
+    min-width: 0;
+}
+
+.pagina-usuarios {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    width: 100%;
+    min-width: 0;
+    padding-bottom: 2rem;
+
+    color: var(--cor-texto, #eaf4ff);
+}
+
+.cabecalho-usuarios {
+    h1 {
+        margin: 0;
+        font-size: clamp(1.5rem, 2.3vw, 2rem);
+        font-weight: 700;
+        color: #f3f8ff;
+    }
+
+    p {
+        margin: 0.55rem 0 0;
+        color: var(--cor-texto-secundario, #91aac9);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+}
+
+.indicadores-usuarios {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.card-indicador {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    min-height: 108px;
+    min-width: 0;
+    padding: 1.2rem;
+
+    background: #081c34;
+    border: 1px solid #234568;
+    border-radius: 12px;
+}
+
+.icone-indicador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 48px;
+    height: 48px;
+    border-radius: 11px;
+
+    &.azul {
+        color: #5cc8f6;
+        background: rgba(92, 200, 246, 0.12);
+    }
+
+    &.roxo {
+        color: #b6a3ff;
+        background: rgba(182, 163, 255, 0.12);
+    }
+
+    &.verde {
+        color: #42dcaa;
+        background: rgba(66, 220, 170, 0.12);
+    }
+}
+
+.dados-indicador {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+
+    span {
+        color: #91aac9;
+        font-size: 0.8rem;
+    }
+
+    strong {
+        color: #f3f8ff;
+        font-size: 1.6rem;
+        line-height: 1.2;
+    }
+
+    small {
+        color: #91aac9;
+        font-size: 0.75rem;
+    }
+}
+
+.mensagem-sucesso,
+.mensagem-erro {
+    margin: 0;
+    padding: 0.85rem 1rem;
+    border-radius: 9px;
+    font-size: 0.85rem;
+}
+
+.mensagem-sucesso {
+    color: #42dcaa;
+    border: 1px solid #278d6d;
+    background: rgba(66, 220, 170, 0.07);
+}
+
+.mensagem-erro {
+    color: #ff9caa;
+    border: 1px solid #b24559;
+    background: rgba(255, 99, 117, 0.07);
+}
+
+

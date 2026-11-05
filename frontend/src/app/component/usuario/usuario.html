@@ -1,19 +1,44 @@
-<section class="pagina-usuario">
 
-    <nav class="caminho" aria-label="Caminho de navegação">
-        <a routerLink="/painel">Início</a>
-        <span>›</span>
-        <span>Usuarios</span>
-    </nav>
+<section class="pagina-usuarios">
 
-    <app-tabela 
-    titulo="Usuarios" 
-    descricao="Visualize e gerencie os usuarios cadastrados no sistema" 
-    [colunas]="colunas" 
-    [registros]="registros" 
-    placeholderBusca="Pesquisar nome, email ou perfil ..."
-    textoAdicionar="Adicionar Usuario"
-    ></app-tabela>
+    <app-tabela
+        titulo="Gerenciamento de usuários"
+        descricao="Consulte, cadastre e gerencie os usuários do sistema."
+        placeholderBusca="Pesquisar por nome ou e-mail..."
+        textoAdicionar="Adicionar usuário"
+        [colunas]="colunas"
+        [registros]="registros()"
+        (adicionar)="adicionarUsuario()"
+        (editar)="editarUsuario($event)"
+        (remover)="removerUsuario($event)">
+    </app-tabela>
 
+    @if (modalAberto()) {
+
+        <app-modal
+            [titulo]="usuarioSelecionado() ? 'Editar usuário' : 'Cadastrar usuário'"
+            [descricao]="usuarioSelecionado() ? 'Altere os dados do usuário.' : 'Informe os dados do novo usuário.'"
+            (fechar)="fecharModal()">
+
+            @if (erro()) {
+                <p class="mensagem-erro" role="alert">
+                    {{ erro() }}
+                </p>
+            }
+
+            <app-formulario-usuario
+                [usuario]="usuarioSelecionado()"
+                (salvar)="salvarUsuario($event)"
+                (cancelar)="fecharModal()">
+            </app-formulario-usuario>
+
+        </app-modal>
+    }
+
+    @if (mensagem()) {
+        <p class="mensagem-sucesso" role="status">
+            {{ mensagem() }}
+        </p>
+    }
 
 </section>
