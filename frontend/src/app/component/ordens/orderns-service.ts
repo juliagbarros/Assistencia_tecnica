@@ -2,6 +2,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+
+export type SituacaoOrdem =
+    'Aberta' |
+    'Em_execucao' |
+    'Concluida' |
+    'Cancelada';
+
+
 export interface AparelhoOrdem {
     id: number;
     tipo?: string;
@@ -72,11 +80,19 @@ export class OrdemService {
         return this.http.post<OrdemServico>(this.URL, dados);
     }
 
-    atualizar(id: number, dados: DadosOrdem) {
-        return this.http.put<void>(`${this.URL}/${id}`, dados);
-    }
-
+  atualizar( id: number, dados: DadosOrdem & { status?: SituacaoOrdem }) 
+  {  return this.http.put<void>(  `${this.URL}/${id}`, dados );
+}
     remover(id: number) {
         return this.http.delete<void>(`${this.URL}/${id}`);
     }
+
+    
+alterarStatus(id: number, status: SituacaoOrdem) {
+    return this.http.patch<void>(
+        `${this.URL}/${id}/status`,
+        { status }
+    );
+}
+
 }

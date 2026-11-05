@@ -1,0 +1,397 @@
+
+<section class="pagina-detalhes-ordem">
+
+    <nav class="caminho">
+        <a routerLink="/painel">Início</a>
+        <span>›</span>
+        <a routerLink="/ordens">Ordens</a>
+        <span>›</span>
+        <span>Detalhes</span>
+    </nav>
+
+    @if (ordem(); as dados) {
+
+        <header class="cabecalho">
+
+            <div>
+                <h1>
+                    Ordem de Serviço
+                    #OS-{{ dados.id.toString().padStart(4, '0') }}
+                </h1>
+
+                <p>
+                    Gerencie os serviços e acompanhe as etapas
+                    desta ordem de serviço.
+                </p>
+            </div>
+
+            <span
+                class="status"
+                [class.aberta]="statusAtual() === 'Aberta'"
+                [class.execucao]="statusAtual() === 'Em_execucao'"
+                [class.concluida]="statusAtual() === 'Concluida'"
+                [class.cancelada]="statusAtual() === 'Cancelada'">
+
+                {{ formatarStatus(dados.status) }}
+
+            </span>
+
+        </header>
+
+        <div class="card">
+
+            <div class="titulo-card">
+                <svg lucideClipboardList [size]="22"></svg>
+                <h2>Informações da ordem</h2>
+            </div>
+
+            <div class="informacoes">
+
+                <div class="campo">
+                    <span>Cliente</span>
+                    <strong>{{ dados.clienteNome }}</strong>
+                </div>
+
+                <div class="campo">
+                    <span>Aparelho</span>
+                    <strong>{{ dados.aparelho }}</strong>
+                </div>
+
+                <div class="campo">
+                    <span>Técnico responsável</span>
+                    <strong>{{ dados.tecnicoNome }}</strong>
+                </div>
+
+                <div class="campo">
+                    <span>Defeito relatado</span>
+                    <strong>{{ dados.defeitoRelatado }}</strong>
+                </div>
+
+                <div class="campo">
+                    <span>Diagnóstico</span>
+                    <strong>
+                        {{ dados.diagnostico || 'Não informado' }}
+                    </strong>
+                </div>
+
+                <div class="campo">
+                    <span>Data de abertura</span>
+                    <strong>
+                        {{ formatarData(dados.dataAbertura) }}
+                    </strong>
+                </div>
+
+                <div class="campo">
+                    <span>Data de conclusão</span>
+                    <strong>
+                        {{ formatarData(dados.dataConclusao) }}
+                    </strong>
+                </div>
+
+                <div class="campo">
+                    <span>Situação atual</span>
+                    <strong>{{ formatarStatus(dados.status) }}</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="cabecalho-itens">
+
+                <div class="titulo-card">
+                    <svg lucideWrench [size]="22"></svg>
+                    <h2>Itens de serviço</h2>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-adicionar-item"
+                    [disabled]="!podeEditarItens() || processandoItem()"
+                    (click)="abrirCadastroItem()">
+
+                    <svg lucidePlus [size]="18"></svg>
+                    Adicionar item
+
+                </button>
+
+            </div>
+
+            <div class="resumo-itens">
+
+                <div class="resumo-card">
+
+                    <svg lucidePackage [size]="22"></svg>
+
+                    <div>
+                        <span>Itens cadastrados</span>
+                        <strong>{{ totalItens() }}</strong>
+                    </div>
+
+                </div>
+
+                <div class="resumo-card destaque">
+
+                    <svg lucideWallet [size]="22"></svg>
+
+                    <div>
+                        <span>Valor total dos serviços</span>
+                        <strong>{{ formatarMoeda(valorTotal()) }}</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="tabela-scroll">
+
+                <table class="tabela-itens">
+
+                    <thead>
+                        <tr>
+                            <th>Serviço</th>
+                            <th>Quantidade</th>
+                            <th>Valor unitário</th>
+                            <th>Valor total</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @for (item of itens(); track item.id) {
+
+                            <tr>
+
+                                <td>
+                                    <span class="nome-servico">
+                                        <svg lucideWrench [size]="16"></svg>
+                                        {{ item.servicoNome }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ item.quantidade }}
+                                </td>
+
+                                <td>
+                                    {{ formatarMoeda(item.precoUnitario) }}
+                                </td>
+
+                                <td>
+                                    {{ formatarMoeda(item.subtotal) }}
+                                </td>
+
+                                <td>
+
+                                    <div class="acoes-item">
+
+                                        <button
+                                            type="button"
+                                            class="btn-editar-item"
+                                            title="Editar item"
+                                            [disabled]="!podeEditarItens() || processandoItem()"
+                                            (click)="editarItem(item.id)">
+
+                                            <svg lucidePencil [size]="17"></svg>
+
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="btn-remover-item"
+                                            title="Remover item"
+                                            [disabled]="!podeEditarItens() || processandoItem()"
+                                            (click)="removerItem(item.id)">
+
+                                            <svg lucideTrash2 [size]="17"></svg>
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        } @empty {
+
+                            <tr>
+                                <td colspan="5" class="tabela-vazia">
+                                    Nenhum serviço foi adicionado a esta ordem.
+                                </td>
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="titulo-card">
+                <svg lucideClock3 [size]="22"></svg>
+                <h2>Andamento da ordem de serviço</h2>
+            </div>
+
+            <div class="etapas">
+
+                @for (etapa of etapas; track etapa; let i = $index) {
+
+                    <div
+                        class="etapa"
+                        [class.atual]="indiceEtapa() === i"
+                        [class.finalizada]="indiceEtapa() > i && statusAtual() !== 'Cancelada'">
+
+                        <div class="circulo">
+
+                            @if (indiceEtapa() > i && statusAtual() !== 'Cancelada') {
+                                <svg lucideCircleCheck [size]="18"></svg>
+                            }
+
+                        </div>
+
+                        <span>
+                            {{ formatarStatus(etapa) }}
+                        </span>
+
+                    </div>
+
+                }
+
+            </div>
+
+            @if (podeAvancar() || podeCancelar()) {
+
+                <div class="acoes-fluxo">
+
+                    @if (podeAvancar()) {
+
+                        <button
+                            type="button"
+                            class="btn-avancar-status"
+                            [disabled]="processandoStatus()"
+                            (click)="avancarStatus()">
+
+                            @if (proximoStatus() === 'Concluida') {
+
+                                <svg lucideCircleCheck [size]="18"></svg>
+                                Concluir OS
+
+                            } @else {
+
+                                <svg lucideArrowRight [size]="18"></svg>
+                                Iniciar execução
+
+                            }
+
+                        </button>
+
+                    }
+
+                    @if (podeCancelar()) {
+
+                        <button
+                            type="button"
+                            class="btn-cancelar-status"
+                            [disabled]="processandoStatus()"
+                            (click)="cancelarOrdem()">
+
+                            <svg lucideBan [size]="18"></svg>
+                            Cancelar OS
+
+                        </button>
+
+                    }
+
+                </div>
+
+            } @else if (statusAtual() === 'Concluida') {
+
+                <p class="aviso-finalizacao">
+                    Esta ordem de serviço foi concluída.
+                    Não é mais possível alterar seus itens ou sua situação.
+                </p>
+
+            } @else if (statusAtual() === 'Cancelada') {
+
+                <p class="aviso-cancelamento">
+                    Esta ordem de serviço foi cancelada.
+                    Não é mais possível alterar seus itens ou sua situação.
+                </p>
+
+            }
+
+        </div>
+
+        @if (mensagem()) {
+
+            <p class="mensagem-sucesso" role="status">
+                {{ mensagem() }}
+            </p>
+
+        }
+
+        @if (erro()) {
+
+            <p class="mensagem-erro" role="alert">
+                {{ erro() }}
+            </p>
+
+        }
+
+        <a routerLink="/ordens" class="btn-voltar">
+
+            <svg lucideArrowLeft [size]="18"></svg>
+            Voltar para ordens
+
+        </a>
+
+        @if (modalItemAberto()) {
+
+            <app-modal
+                [titulo]="itemSelecionado() ? 'Editar item de serviço' : 'Adicionar item de serviço'"
+                descricao="Selecione o serviço e informe a quantidade e o valor unitário."
+                (fechar)="fecharModalItem()">
+
+                <app-formulario-item-ordem
+                    [ordemId]="ordemId"
+                    [item]="itemSelecionado()"
+                    (salvar)="salvarItem($event)"
+                    (cancelar)="fecharModalItem()">
+                </app-formulario-item-ordem>
+
+            </app-modal>
+
+        }
+
+    } @else {
+
+        <div class="card estado-vazio">
+
+            <h2>Ordem não disponível</h2>
+
+            <p>
+                Aguardando os dados da ordem ou verificando
+                o identificador informado.
+            </p>
+
+            <a routerLink="/ordens" class="btn-voltar">
+
+                <svg lucideArrowLeft [size]="18"></svg>
+                Voltar para ordens
+
+            </a>
+
+        </div>
+
+    }
+
+</section>

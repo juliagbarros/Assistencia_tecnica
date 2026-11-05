@@ -271,3 +271,20 @@ tbody tr:last-child td {
     border: 0;
 }
 
+
+.btn-detalhes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #197da9;
+    border-radius: 7px;
+    background: rgba(92, 200, 246, 0.08);
+    color: var(--cor-destaque, #5cc8f6);
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(92, 200, 246, 0.18);
+    }
+}

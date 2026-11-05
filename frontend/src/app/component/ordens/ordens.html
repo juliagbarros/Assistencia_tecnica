@@ -16,8 +16,11 @@
         [registros]="registros()"
         (adicionar)="adicionarOrdem()"
         (editar)="editarOrdem($event)"
-        (remover)="removerOrdem($event)">
-
+        (remover)="removerOrdem($event)"
+        [exibirDetalhes]="true"
+        (visualizar)="visualizarOrdem($event)"
+        >
+        
         <div resumo class="indicadores">
 
             <div class="card-indicador">

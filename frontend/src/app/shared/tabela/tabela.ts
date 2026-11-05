@@ -1,5 +1,5 @@
 import { Component, computed, input, output, signal } from '@angular/core';
-import { LucideSearch, LucidePlus, LucideSquarePen,  LucideTrash2, LucideChevronLeft,   LucideChevronRight
+import { LucideSearch, LucidePlus, LucideSquarePen,  LucideTrash2, LucideChevronLeft,   LucideChevronRight, LucideEye
 } from '@lucide/angular';
 
 export interface ColunaTabela {
@@ -15,7 +15,8 @@ export interface RegistroTabela {
 
 @Component({
   selector: 'app-tabela',
-  imports: [ LucideSearch,
+  imports: [LucideEye, 
+    LucideSearch,
         LucidePlus,
         LucideSquarePen,
         LucideTrash2,
@@ -27,6 +28,12 @@ export interface RegistroTabela {
 
 
 export class Tabela {
+
+readonly exibirDetalhes = input<boolean>(false);
+
+readonly visualizar = output<number>();
+
+
 titulo = input.required<string>();
     descricao = input.required<string>();
 

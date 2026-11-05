@@ -7,7 +7,7 @@ import {
     signal
 } from '@angular/core';
 
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import {
     LucideClipboardList,
@@ -50,6 +50,8 @@ import { FormularioOrdem } from './formulario-ordem/formulario-ordem';
 export class Ordens implements OnInit {
 
     private readonly ordemService = inject(OrdemService);
+    private readonly router = inject(Router);
+
 
     readonly ordens = this.ordemService.listar();
 
@@ -64,6 +66,10 @@ export class Ordens implements OnInit {
         { chave: 'abertura', titulo: 'Abertura' },
         { chave: 'status', titulo: 'Status', tipo: 'status' }
     ];
+
+    visualizarOrdem(id: number): void {
+    this.router.navigate(['/ordens', id]);
+    }
 
     readonly registros = computed<RegistroTabela[]>(() =>
         this.ordens().map(ordem => ({

@@ -1,0 +1,116 @@
+
+<form
+    class="formulario-item-ordem"
+    [formGroup]="formulario"
+    (ngSubmit)="enviar()"
+    novalidate>
+
+    <div class="campo-formulario">
+
+        <label for="servico-item">
+            Serviço <span>*</span>
+        </label>
+
+        <select
+            id="servico-item"
+            formControlName="servicoId"
+            (change)="selecionarServico()">
+
+            <option [ngValue]="null">
+                Selecione um serviço
+            </option>
+
+            @for (servico of servicos(); track servico.id) {
+                <option [ngValue]="servico.id">
+                    {{ servico.nome }}
+                </option>
+            }
+
+        </select>
+
+        @if (formulario.controls.servicoId.invalid && formulario.controls.servicoId.touched) {
+            <small class="erro">Selecione um serviço.</small>
+        }
+
+        @if (servicos().length === 0) {
+            <small class="aviso">
+                Nenhum serviço disponível.
+            </small>
+        }
+
+    </div>
+
+    <div class="campo-formulario">
+
+        <label for="quantidade-item">
+            Quantidade <span>*</span>
+        </label>
+
+        <input
+            id="quantidade-item"
+            type="number"
+            min="1"
+            step="1"
+            formControlName="quantidade">
+
+        @if (formulario.controls.quantidade.invalid && formulario.controls.quantidade.touched) {
+            <small class="erro">
+                Informe uma quantidade inteira maior que zero.
+            </small>
+        }
+
+    </div>
+
+    <div class="campo-formulario">
+
+        <label for="valor-item">
+            Valor unitário (R$) <span>*</span>
+        </label>
+
+        <input
+            id="valor-item"
+            type="number"
+            min="0"
+            step="0.01"
+            formControlName="precoUnitario">
+
+        @if (formulario.controls.precoUnitario.invalid && formulario.controls.precoUnitario.touched) {
+            <small class="erro">
+                Informe um valor válido.
+            </small>
+        }
+
+    </div>
+
+    <div class="resumo-item">
+        <span>Valor total do item</span>
+
+        <strong>
+            {{
+                formatarMoeda(
+                    formulario.controls.quantidade.value *
+                    formulario.controls.precoUnitario.value
+                )
+            }}
+        </strong>
+    </div>
+
+    <div class="acoes-formulario">
+
+        <button
+            type="button"
+            class="btn-cancelar"
+            (click)="cancelar.emit()">
+            Cancelar
+        </button>
+
+        <button
+            type="submit"
+            class="btn-salvar"
+            [disabled]="formulario.invalid">
+            {{ item() ? 'Salvar alterações' : 'Adicionar item' }}
+        </button>
+
+    </div>
+
+</form>

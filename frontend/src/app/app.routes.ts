@@ -56,7 +56,14 @@ export const routes: Routes = [
             {
                 path: 'usuarios',
                 component:Usuario
+            },
+           {
+                path: 'ordens/:id',
+                loadComponent: () =>
+                    import('./component/ordens/detalhes-ordem/detalhes-ordem')
+                        .then(m => m.DetalhesOrdem)
             }
+            
         ]
     }
 ];

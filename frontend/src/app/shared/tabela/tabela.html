@@ -115,8 +115,19 @@
                             </td>
 
                         }
+                    
 
                         <td class="acoes">
+
+                         @if (exibirDetalhes()) {
+                            <button
+                                type="button"
+                                class="btn-detalhes"
+                                title="Visualizar detalhes"
+                                (click)="visualizar.emit(registro.id)">
+                                <svg lucideEye [size]="16"></svg>
+                            </button>
+                        }
 
                             <button
                                 type="button"

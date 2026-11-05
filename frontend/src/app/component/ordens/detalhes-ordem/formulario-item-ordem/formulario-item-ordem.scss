@@ -1,0 +1,164 @@
+
+:host {
+    display: block;
+    width: 100%;
+}
+
+.formulario-item-ordem {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.campo-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+        color: var(--cor-texto, #edf6ff);
+        font-size: 0.85rem;
+        font-weight: 500;
+
+        span {
+            color: #ff8496;
+        }
+    }
+
+    input,
+    select {
+        width: 100%;
+        min-height: 44px;
+        padding: 0.8rem 1rem;
+        box-sizing: border-box;
+
+        background: var(--cor-input, #0a1b33);
+        color: var(--cor-texto, #edf6ff);
+
+        border: 1px solid var(--cor-borda-azul, #234568);
+        border-radius: 9px;
+
+        font-family: inherit;
+        font-size: 0.85rem;
+        outline: none;
+
+        &:focus {
+            border-color: var(--cor-destaque, #5cc8f6);
+            box-shadow: 0 0 0 3px rgba(92, 200, 246, 0.1);
+        }
+
+        &.ng-invalid.ng-touched {
+            border-color: #ff8496;
+        }
+    }
+
+    select {
+        cursor: pointer;
+
+        option {
+            background: var(--cor-input, #0a1b33);
+            color: var(--cor-texto, #edf6ff);
+        }
+    }
+
+    .erro {
+        color: #ff8496;
+        font-size: 0.75rem;
+    }
+
+    .aviso {
+        color: #f5c66f;
+        font-size: 0.75rem;
+    }
+}
+
+.resumo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+
+    background: rgba(92, 200, 246, 0.07);
+    border: 1px solid var(--cor-borda-azul, #234568);
+    border-radius: 10px;
+
+    span {
+        color: var(--cor-texto-secundario, #91aac9);
+        font-size: 0.85rem;
+    }
+
+    strong {
+        color: var(--cor-destaque, #5cc8f6);
+        font-size: 1.15rem;
+    }
+}
+
+.acoes-formulario {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+
+    margin: 0 -1.5rem -1.5rem;
+    padding: 1.25rem 1.5rem;
+
+    border-top: 1px solid var(--cor-borda-azul, #234568);
+
+    button {
+        min-height: 42px;
+        padding: 0.75rem 1.25rem;
+        border-radius: 9px;
+
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .btn-cancelar {
+        background: var(--cor-input, #0a1b33);
+        color: var(--cor-texto, #edf6ff);
+        border: 1px solid var(--cor-borda-azul, #234568);
+
+        &:hover {
+            border-color: var(--cor-destaque, #5cc8f6);
+        }
+    }
+
+    .btn-salvar {
+        background: var(--cor-destaque, #5cc8f6);
+        color: #00101d;
+        border: 1px solid var(--cor-destaque, #5cc8f6);
+
+        &:hover:not(:disabled) {
+            background: #8cdefc;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .acoes-formulario {
+        margin: 0 -1rem -1rem;
+        padding: 1rem;
+
+        button {
+            flex: 1;
+        }
+    }
+}
+
+@media (max-width: 380px) {
+    .acoes-formulario {
+        flex-direction: column;
+
+        button {
+            width: 100%;
+        }
+    }
+}
