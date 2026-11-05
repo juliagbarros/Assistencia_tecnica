@@ -72,6 +72,7 @@ public class OrdemServicoService {
         }
         ordem.setDefeitoRelatado(dados.getDefeitoRelatado());
         ordem.setDiagnostico(dados.getDiagnostico());
+        ordem.setSituacao(dados.getSituacao());
         return ordem;
     }
 

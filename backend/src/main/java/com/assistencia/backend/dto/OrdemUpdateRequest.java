@@ -1,5 +1,6 @@
 package com.assistencia.backend.dto;
 
+import com.assistencia.backend.model.SituacaoOrdem;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,4 +18,7 @@ public class OrdemUpdateRequest {
     private String defeitoRelatado;
 
     private String diagnostico;
+
+    @NotNull(message = "Obrigatório informar a situação")
+    private SituacaoOrdem situacao;
 }
