@@ -97,17 +97,11 @@ export class Ordens implements OnInit {
         ).length
     );
 
-    readonly ordensEmAtendimento = computed(() =>
-        this.ordens().filter(ordem =>
-            ordem.status === 'EM_ATENDIMENTO' ||
-            ordem.status === 'EM_ANDAMENTO'
-        ).length
-    );
+    
 
     readonly ordensConcluidas = computed(() =>
         this.ordens().filter(ordem =>
-            ordem.status === 'CONCLUIDA' ||
-            ordem.status === 'ENTREGUE'
+            ordem.status === 'CONCLUIDA' 
         ).length
     );
 

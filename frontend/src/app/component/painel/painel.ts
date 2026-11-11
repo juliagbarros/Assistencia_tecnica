@@ -147,6 +147,7 @@ export class Painel implements OnInit {
     readonly distribuicaoOrdens = computed(() => {
 
         const ordens = this.ordens();
+        console.log(ordens)
         const total = ordens.length;
 
         const situacoes = [
@@ -157,10 +158,10 @@ export class Painel implements OnInit {
                 valores: ['ABERTA']
             },
             {
-                nome: 'Em atendimento',
-                status: 'Em atendimento',
-                classe: 'andamento',
-                valores: ['EM_ATENDIMENTO', 'EM_ANDAMENTO']
+                nome: 'Em execução',
+                status: 'Em execução',
+                classe: 'Em execução',
+                valores: ['EM_EXECUCAO']
             },
             {
                 nome: 'Concluídas',
@@ -216,7 +217,7 @@ export class Painel implements OnInit {
 
         const nomes: Record<string, string> = {
             ABERTA: 'Aberta',
-            EM_ATENDIMENTO: 'Em atendimento',
+            EM_EXECUCAO: 'Em_execucao',
             CONCLUIDO: 'Concluído',
             CANCELADO: 'Cancelado'
         };
